@@ -1,6 +1,6 @@
 # uni-httpclient
 
-使用uniapp 的 HttpClient.
+适用于 uniapp 的 HttpClient.
 
 核心功能：
 - [x] query
@@ -12,12 +12,13 @@
 - [x] upload
 - [ ] download
 - [x] 拦截/intercepter
-  -[x] query
-  -[x] upload
-  -[ ] download
+  - [x] query
+  - [x] upload
+  - [ ] download
 - 拦截器
   - [x] JwtTokenIntercepter Json Web Token 拦截器
   - [x] AutoDomainIntercepter 自动添加域名的拦截器，用于将 `/api` 转化为 `http://localhost:8080/api`
+  - [x] 自定义拦截器
 
 
 ## 使用方式
@@ -57,4 +58,15 @@ http.get<any>(`/api/user/info`)
 .then(r=>{
     // 处理返回的数据
 })
+```
+
+## 拦截器原理
+
+```
+请求 --->  拦截器A   -----> 拦截器B ----> .... ----> 核心拦截器
+                                              |
+                                      处理请求（底层请求方法）
+                                              | 
+响应 <----  拦截器A <-----  拦截器B  <----  .... <--- 核心拦截器
+
 ```
