@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "outDir": "dist/esmodule",
+    "outDir": "dist",
     "declaration": true,
     "strict": true,
     "jsx": "preserve",

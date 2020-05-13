@@ -342,7 +342,7 @@ healthchecksdb
 .DS_Store
 node_modules/
 unpackage/
-dist/
+# dist/
 
 # local env files
 .env.local
