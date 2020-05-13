@@ -1,0 +1,16 @@
+{
+  "name": "uni-httpclient",
+  "version": "0.1.0",
+  "private": false,
+  "main": "./dist/esmodule/index.js",
+  "types": "./dist/esmodule/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@dcloudio/types": "*",
+    "typescript": "^3.0.0"
+  }
+}
