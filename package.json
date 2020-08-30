@@ -1,12 +1,18 @@
 {
   "name": "uni-httpclient",
-  "version": "0.1.0",
+  "version": "1.1.0",
   "private": false,
+  "files": [
+    "dist"
+  ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "author": "john0king",
   "scripts": {
     "build": "tsc"
   },
+  "repository": "https://github.com/John0King/uni-HttpClient",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "@dcloudio/types": "*",
