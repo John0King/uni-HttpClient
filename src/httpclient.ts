@@ -1,3 +1,7 @@
+import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from './intercepter';
+import { PipeOptions, ResponseData, HttpMethods } from './options';
+import { IHttpClientHander, UniRequestHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander } from './httpclien-handler';
+
 export class HttpClient {
     static readonly intercepters: HttpClientIntercepter[] = [];
 
@@ -7,9 +11,10 @@ export class HttpClient {
         header?: any,
         options?: {
             responseType?: "text" | "arraybuffer";
-        }
+        },
+        pipeOptions?:PipeOptions
     ): Promise<T> {
-        return this.request(url, "GET", query, header, options)
+        return this.request(url, "GET", query, header, options, pipeOptions)
             .then(x => x.data as T)
             .catch(e => {
                 throw e;
@@ -22,9 +27,10 @@ export class HttpClient {
         header?: any,
         options?: {
             responseType?: "text" | "arraybuffer";
-        }
+        },
+        pipeOptions?:PipeOptions
     ): Promise<T> {
-        return this.request(url, "POST", data, header, options)
+        return this.request(url, "POST", data, header, options, pipeOptions)
             .then(x => x.data)
             .catch(e => {
                 throw e;
@@ -37,9 +43,10 @@ export class HttpClient {
         header?: any,
         options?: {
             responseType?: "text" | "arraybuffer";
-        }
+        },
+        pipeOptions?:PipeOptions
     ): Promise<T> {
-        return this.request(url, "PUT", data, header, options)
+        return this.request(url, "PUT", data, header, options, pipeOptions)
             .then(x => x.data)
             .catch(e => {
                 throw e;
@@ -52,14 +59,16 @@ export class HttpClient {
         header?: any,
         options?: {
             responseType?: "text" | "arraybuffer";
-        }
+        },
+        pipeOptions?:PipeOptions
     ): Promise<T> {
         return this.request(
             url,
             "POST",
             data,
             { ...header, "Content-Type": "application/x-www-form-urlencoded" },
-            options
+            options,
+            pipeOptions
         )
             .then(x => x.data)
             .catch(e => {
@@ -72,10 +81,11 @@ export class HttpClient {
         data?: object | string,
         header?: any,
         options?: {
-            responseType?: "text" | "arraybuffer";
-        }
+            responseType?: "text" | "arraybuffer"
+        },
+        pipeOptions?:PipeOptions
     ): Promise<T> {
-        return this.request(url, "DELETE", data, header, options)
+        return this.request<T>(url, "DELETE", data, header, options, pipeOptions)
             .then(x => x.data)
             .catch(e => {
                 throw e;
@@ -91,35 +101,32 @@ export class HttpClient {
             name?: string;
             formData?: any;
         },
-        header?: any
+        header?: any,
+        pipeOptions?:PipeOptions
     ): Promise<ResponseData<T>> {
-        return this.do_intercepte(
-            {
-                url,
-                method: "POST",
-                header
-            },
-            new FinalIntercepter(rcontext => {
-                return this.internal_uploadFile(rcontext, {
-                    files: data.files,
-                    fileType: data.fileType,
-                    filePath: data.filePath,
-                    name: data.name,
-                    formData: data.formData
-                });
-            }, this)
-        )
-            .then(x => {
-                return {
-                    statusCode: x.statusCode,
-                    data: x.data,
-                    header: x.header
-                };
-            })
-            .catch(e => {
-                throw e;
-            });
+        return this.send<T>({
+            url,
+            method:"POST",
+            data,
+            header,
+            pipeOptions
+        }, new UniUploadHttpClientHander())
     }
+
+    download<T = string>(url: string,
+        header?:any,
+        options?:{
+            responseType?:"text"|"arraybuffer"
+        },
+        pipeOptions?:PipeOptions):Promise<ResponseData<T>>{
+            return this.send<T>({
+                method:"GET",
+                url,
+                header,
+                responseType: options?.responseType,
+                pipeOptions
+            }, new UniDownloadHttpClientHander())
+        }
 
     /**
      * 全能的请求
@@ -129,220 +136,55 @@ export class HttpClient {
      * @param header 请求头
      * @param options 其他参数
      */
-    request(
+    request<T = any>(
         url: string,
-        method:
-            | "OPTIONS"
-            | "GET"
-            | "HEAD"
-            | "POST"
-            | "PUT"
-            | "DELETE"
-            | "TRACE"
-            | "CONNECT",
+        method: HttpMethods,
         data?: any,
         header?: any,
         options?: {
             responseType?: "text" | "arraybuffer";
+        },
+        pipeOptions?:PipeOptions
+    ): Promise<ResponseData<T>> {
+        return this.send<T>({
+            url,
+            method,
+            data,
+            header,
+            responseType: options?.responseType,
+            pipeOptions
+            }, new UniRequestHttpClientHander()); 
+           
+    }
+
+    send<T=any>(request: IntercepterRequestContext, handler:IHttpClientHander):Promise<ResponseData<T>>{
+        let pipeline = this.createIntercepterPipeline(handler);
+        return pipeline(request);
+    }
+
+    private createIntercepterPipeline(handler:IHttpClientHander):IntercepterDelegate{
+        
+        let client   = this;
+        class HandlerIntercepter implements HttpClientIntercepter {
+            constructor(private handler:IHttpClientHander, private client:HttpClient){}
+            handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
+                return this.handler.send(request, this.client);
+            }
+            
         }
-    ): Promise<ResponseData> {
-        return this.do_intercepte(
-            {
-                url,
-                method,
-                data,
-                header,
-                responseType: options?.responseType ?? undefined
-            },
-            new FinalIntercepter(rcontext => {
-                return this.internal_request(rcontext);
-            }, this)
-        )
-            .then(x => {
-                return {
-                    statusCode: x.statusCode,
-                    data: x.data,
-                    header: x.header
-                } as any;
-            })
-            .catch(e => {
-                throw e;
-            });
-    }
-
-    /**
-     * 最基础的 @see uni.request 封装
-     * @param req 请求上下文
-     */
-    private internal_request(req: IntercepterRequestContext) {
-        const p = new Promise<any>((resolve, reject) => {
-            uni.request({
-                url: req.url,
-                method: req.method,
-                data: req.data,
-                header: req.header,
-                responseType: req.responseType ?? "text",
-                success: x => {
-                    //     console.log(x);
-                    //   if (
-                    //     (x.header["content-type"] as string).toLowerCase().indexOf("json") >
-                    //     -1
-                    //   ) {
-                    //     x.data = JSON.parse(x.data!) as any;
-                    //   }
-                    resolve({ ...x, httpClient: this });
-                },
-                fail: x => {
-                    reject(x);
-                }
-            });
-        });
-        return p;
-    }
-
-    private internal_uploadFile(
-        req: IntercepterRequestContext,
-        upload: {
-            files?: any[];
-            fileType?: "image" | "audio" | "video";
-            filePath?: string;
-            name?: string;
-            formData?: FormData;
-        }
-    ): Promise<IntercepterResponseContext> {
-        const p = new Promise<any>((resovle, reject) => {
-            uni.uploadFile({
-                url: req.url,
-                files: upload.files,
-                fileType: upload.fileType,
-                filePath: upload.filePath,
-                name: upload.name,
-                header: req.header,
-                formData: upload.formData,
-
-                success: x => {
-                    let data = x.data;
-                    let x2 = x as any;
-                    let ct = x2.header?.["Content-Type"] as string;
-                    try {
-                        data = JSON.parse(data!);
-                    } catch (e) {
-                        data = data;
-                        // 说明不是json, 操蛋的api没法监测header
-                    }
-                    x2.data = data;
-                    resovle({
-                        ...x2,
-                        httpClient: this
-                    });
-                },
-                fail: e => {
-                    reject(e);
-                }
-            });
-        });
-        return p;
-    }
-
-    /**
-     * 在 @see  internal_request 的基础上包裹拦截器
-     * @param context  拦截请求上下文
-     */
-    private do_intercepte(
-        context: IntercepterRequestContext,
-        finalIntercepter: FinalIntercepter
-    ): Promise<ResponseData> {
-        let pipe = [...HttpClient.intercepters, finalIntercepter];
+        let pipe = [...HttpClient.intercepters, new HandlerIntercepter(handler, client)];
+        
         let i = -1;
 
-        return chain(context);
-        function chain(
-            context: IntercepterRequestContext
-        ): Promise<IntercepterResponseContext> {
+        
+        let chain = (request: IntercepterRequestContext) =>{
             i++;
-            let p = pipe[i].handle(context, chain);
+            let p = pipe[i].handle(request, chain);
             return p;
         }
+        return chain;
     }
 }
 
-export interface HttpClientIntercepter {
-    handle(
-        request: IntercepterRequestContext,
-        next: (
-            request: IntercepterRequestContext
-        ) => Promise<IntercepterResponseContext>
-    ): Promise<IntercepterResponseContext>;
-}
-
-export interface IntercepterRequestContext {
-    url: string;
-    readonly method:
-        | "OPTIONS"
-        | "GET"
-        | "HEAD"
-        | "POST"
-        | "PUT"
-        | "DELETE"
-        | "TRACE"
-        | "CONNECT";
-    header?: any;
-    data?: any;
-    responseType?: "text" | "arraybuffer";
-}
-
-export interface IntercepterResponseContext {
-    httpClient: HttpClient;
-    statusCode: number;
-    data: any;
-    error?: any;
-    header: any;
-}
-
-class FinalIntercepter implements HttpClientIntercepter {
-    constructor(
-        protected requestHandler: (context: {
-            url: string;
-            method:
-                | "OPTIONS"
-                | "GET"
-                | "HEAD"
-                | "POST"
-                | "PUT"
-                | "DELETE"
-                | "TRACE"
-                | "CONNECT";
-            data?: any;
-            header?: any;
-            options?: {
-                responseType?: "text" | "arraybuffer";
-            };
-        }) => Promise<RequestSuccessCallbackResult>,
-        protected httpClient: HttpClient
-    ) {}
-    handle(
-        request: IntercepterRequestContext,
-        next: (
-            request: IntercepterRequestContext
-        ) => Promise<IntercepterResponseContext>
-    ): Promise<IntercepterResponseContext> {
-        return this.requestHandler(request).then(r => {
-            return {
-                httpClient: this.httpClient,
-                statusCode: r?.statusCode ?? 0,
-                header: r.header,
-                data: r.data,
-                error: null
-            };
-        });
-    }
-}
-
-export interface ResponseData<T = any> {
-    statusCode: number;
-    data: T;
-    error?: any;
-    header: any;
-}
 
 export const httpClient = new HttpClient();

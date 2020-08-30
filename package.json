@@ -7,10 +7,10 @@
   "scripts": {
     "build": "tsc"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "@dcloudio/types": "*",
-    "typescript": "^3.0.0"
+    "typescript": "*",
+    "vue": "2.6.12"
   }
 }

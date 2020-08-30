@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "target": "ES2016",
     "module": "ESNext",
     "outDir": "dist",
     "declaration": true,
@@ -14,7 +14,7 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env",
+      //"webpack-env",
       "@dcloudio/types/uni-app"
     ],
     "paths": {
@@ -32,7 +32,8 @@
   "exclude": [
     "node_modules",
     "unpackage",
-    "src/**/*.nvue"
+    "src/**/*.nvue",
+    "dist"
   ],
   "compileOnSave": true
 }
