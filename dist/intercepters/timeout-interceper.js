@@ -1,5 +1,5 @@
-import { CancelToken } from '@/cancel-token';
-import { CancelError } from '@/errors';
+import { CancelToken } from '../cancel-token';
+import { CancelError } from '../errors';
 export class TimeoutIntercepter {
     /**
      * 支持超时的拦截器

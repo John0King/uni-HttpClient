@@ -3,9 +3,13 @@ import {
     IntercepterRequestContext,
     IntercepterResponseContext,
     IntercepterDelegate
-} from "@/intercepter";
-import { CancelError } from '@/errors';
+} from "../intercepter";
+import { CancelError } from '../errors';
 export class AutoDomainIntercepter implements HttpClientIntercepter {
+    /**
+     * 
+     * @param factory  return a baseurl, not full url
+     */
     constructor(public factory: (url: string) => string) { }
 
     handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
@@ -27,7 +31,7 @@ export class AutoDomainIntercepter implements HttpClientIntercepter {
                     request.url = "/" + request.url;
                 }
                 let baseUrl = this.factory(request.url);
-                if (baseUrl.lastIndexOf("/") == 0) {
+                if (baseUrl.lastIndexOf("/") == (baseUrl.length - 1)) {
                     baseUrl = baseUrl.substr(0, baseUrl.length - 1);
                 }
                 request.url = baseUrl + request.url;

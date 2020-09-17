@@ -1,6 +1,28 @@
 import { UniRequestHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander } from './httpclien-handler';
+import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
+import { RetryIntercepter } from './intercepters/retry-intercepter';
+import { TimeoutIntercepter } from './intercepters/timeout-interceper';
+import { StatusCodeIntercepter } from './intercepters/statuscode-intercepter';
 let HttpClient = /** @class */ (() => {
     class HttpClient {
+        /**
+         * 一次性设置所有目前存在的拦截器
+         * @param option 拦截器配置
+         */
+        static setupDefaults(option) {
+            if ((option === null || option === void 0 ? void 0 : option.retryCount) != null && (option === null || option === void 0 ? void 0 : option.retryCount) > 0) {
+                this.intercepters.push(new RetryIntercepter(option.retryCount));
+            }
+            if ((option === null || option === void 0 ? void 0 : option.baseUrl) != null) {
+                this.intercepters.push(new AutoDomainIntercepter(url => option.baseUrl));
+            }
+            if ((option === null || option === void 0 ? void 0 : option.timeout) != null) {
+                this.intercepters.push(new TimeoutIntercepter(option.timeout));
+            }
+            if ((option === null || option === void 0 ? void 0 : option.statusCodeError) != true) {
+                this.intercepters.push(new StatusCodeIntercepter());
+            }
+        }
         get(url, query, header, options, pipeOptions) {
             return this.request(url, "GET", query, header, options, pipeOptions)
                 .then(x => x.data)
@@ -87,14 +109,20 @@ let HttpClient = /** @class */ (() => {
                     return this.handler.send(request, this.client);
                 }
             }
-            let pipe = [...HttpClient.intercepters, new HandlerIntercepter(handler, client)];
-            let i = -1;
-            let chain = (request) => {
-                i++;
-                let p = pipe[i].handle(request, chain);
-                return p;
-            };
-            return chain;
+            let delegate = (req) => new HandlerIntercepter(handler, client).handle(req, null);
+            for (let i of [...HttpClient.intercepters].reverse()) {
+                let func = (x) => ((req) => i.handle(req, x));
+                delegate = func(delegate);
+            }
+            // let pipe = [...HttpClient.intercepters, new HandlerIntercepter(handler, client)];
+            // let i = -1;
+            // let chain = (request: IntercepterRequestContext) =>{
+            //     i++;
+            //     let p = pipe[i].handle(request, chain);
+            //     return p;
+            // }
+            // return chain;
+            return delegate;
         }
     }
     HttpClient.intercepters = [];

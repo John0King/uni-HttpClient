@@ -1,4 +1,4 @@
-import { CancelError } from '@/errors';
+import { CancelError } from '../errors';
 const AuthKey = "Authorization";
 export class JwtTokenIntercepter {
     constructor(tokenFactory) {

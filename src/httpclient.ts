@@ -1,9 +1,33 @@
 import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from './intercepter';
-import { PipeOptions, ResponseData, HttpMethods } from './options';
+import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions } from './options';
 import { IHttpClientHander, UniRequestHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander } from './httpclien-handler';
+import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
+import { RetryIntercepter } from './intercepters/retry-intercepter';
+import { TimeoutIntercepter } from './intercepters/timeout-interceper';
+import { StatusCodeIntercepter } from './intercepters/statuscode-intercepter';
 
 export class HttpClient {
     static readonly intercepters: HttpClientIntercepter[] = [];
+
+    /**
+     * 一次性设置所有目前存在的拦截器
+     * @param option 拦截器配置
+     */
+    static setupDefaults(option?: DefaultIntercepterOptions) {
+        if (option?.retryCount != null && option?.retryCount > 0) {
+            this.intercepters.push(new RetryIntercepter(option.retryCount));
+        }
+        if (option?.baseUrl != null) {
+            this.intercepters.push(new AutoDomainIntercepter(url => option.baseUrl as string))
+        }
+        if (option?.timeout != null) {
+            this.intercepters.push(new TimeoutIntercepter(option.timeout));
+        }
+
+        if (option?.statusCodeError != true) {
+            this.intercepters.push(new StatusCodeIntercepter());
+        }
+    }
 
     get<T = any>(
         url: string,
@@ -12,7 +36,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer";
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<T> {
         return this.request(url, "GET", query, header, options, pipeOptions)
             .then(x => x.data as T)
@@ -28,7 +52,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer";
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<T> {
         return this.request(url, "POST", data, header, options, pipeOptions)
             .then(x => x.data)
@@ -44,7 +68,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer";
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<T> {
         return this.request(url, "PUT", data, header, options, pipeOptions)
             .then(x => x.data)
@@ -60,7 +84,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer";
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<T> {
         return this.request(
             url,
@@ -83,7 +107,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer"
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<T> {
         return this.request<T>(url, "DELETE", data, header, options, pipeOptions)
             .then(x => x.data)
@@ -102,11 +126,11 @@ export class HttpClient {
             formData?: any;
         },
         header?: any,
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<ResponseData<T>> {
         return this.send<T>({
             url,
-            method:"POST",
+            method: "POST",
             data,
             header,
             pipeOptions
@@ -114,19 +138,19 @@ export class HttpClient {
     }
 
     download<T = string>(url: string,
-        header?:any,
-        options?:{
-            responseType?:"text"|"arraybuffer"
+        header?: any,
+        options?: {
+            responseType?: "text" | "arraybuffer"
         },
-        pipeOptions?:PipeOptions):Promise<ResponseData<T>>{
-            return this.send<T>({
-                method:"GET",
-                url,
-                header,
-                responseType: options?.responseType,
-                pipeOptions
-            }, new UniDownloadHttpClientHander())
-        }
+        pipeOptions?: PipeOptions): Promise<ResponseData<T>> {
+        return this.send<T>({
+            method: "GET",
+            url,
+            header,
+            responseType: options?.responseType,
+            pipeOptions
+        }, new UniDownloadHttpClientHander())
+    }
 
     /**
      * 全能的请求
@@ -144,7 +168,7 @@ export class HttpClient {
         options?: {
             responseType?: "text" | "arraybuffer";
         },
-        pipeOptions?:PipeOptions
+        pipeOptions?: PipeOptions
     ): Promise<ResponseData<T>> {
         return this.send<T>({
             url,
@@ -153,36 +177,45 @@ export class HttpClient {
             header,
             responseType: options?.responseType,
             pipeOptions
-            }, new UniRequestHttpClientHander()); 
-           
+        }, new UniRequestHttpClientHander());
+
     }
 
-    send<T=any>(request: IntercepterRequestContext, handler:IHttpClientHander):Promise<ResponseData<T>>{
+    send<T = any>(request: IntercepterRequestContext, handler: IHttpClientHander): Promise<ResponseData<T>> {
         let pipeline = this.createIntercepterPipeline(handler);
         return pipeline(request);
     }
 
-    private createIntercepterPipeline(handler:IHttpClientHander):IntercepterDelegate{
-        
-        let client   = this;
+    private createIntercepterPipeline(handler: IHttpClientHander): IntercepterDelegate {
+
+        let client = this;
         class HandlerIntercepter implements HttpClientIntercepter {
-            constructor(private handler:IHttpClientHander, private client:HttpClient){}
+            constructor(private handler: IHttpClientHander, private client: HttpClient) { }
             handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
                 return this.handler.send(request, this.client);
             }
-            
-        }
-        let pipe = [...HttpClient.intercepters, new HandlerIntercepter(handler, client)];
-        
-        let i = -1;
 
-        
-        let chain = (request: IntercepterRequestContext) =>{
-            i++;
-            let p = pipe[i].handle(request, chain);
-            return p;
         }
-        return chain;
+
+        let delegate: IntercepterDelegate = (req) => new HandlerIntercepter(handler, client).handle(req, null as any);
+
+        for (let i of [...HttpClient.intercepters].reverse()) {
+            let func = (x: IntercepterDelegate) => ((req: IntercepterRequestContext) => i.handle(req, x))
+            delegate = func(delegate);
+        }
+
+        // let pipe = [...HttpClient.intercepters, new HandlerIntercepter(handler, client)];
+
+        // let i = -1;
+
+
+        // let chain = (request: IntercepterRequestContext) =>{
+        //     i++;
+        //     let p = pipe[i].handle(request, chain);
+        //     return p;
+        // }
+        // return chain;
+        return delegate;
     }
 }
 

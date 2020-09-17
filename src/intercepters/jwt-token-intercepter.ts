@@ -1,5 +1,5 @@
-import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from "@/intercepter";
-import { CancelError } from '@/errors';
+import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from "../intercepter";
+import { CancelError } from '../errors';
 const AuthKey = "Authorization";
 export class JwtTokenIntercepter implements HttpClientIntercepter {
 

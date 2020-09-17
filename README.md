@@ -2,16 +2,15 @@
 
 适用于 uniapp 的 HttpClient.
 
-Update: 2020/8/30
+## Update: 2020/9/17
 
-- 新增 安全取消
-- 新增 实现下载拦截
-- 新增 `TimeoutIntercepter` 和 `StatusCodeIntercepter`
-- 新增 `TokenStorage` 并且异步的`GetTokenAsync` 支持 OnTokenExpired 钩子函数
-- 增强 `JwtTokenIntercepter` 支持异步的 `tokenFactory`
-- 新增 抽象接口 `IHttpClientHander` 和 `HttpClient.Send` 允许使用自己编写的 `IHttpClientHander`
+- 新增 `RetryIntercepter` 出错重试
+- 新增 `HttpClient.setupDefaults(option)` 来一次性启用所有的拦截器
+- 修复 使用`@路径` 导致的 定义文件无法使用问题
+- 新增 demo 
+- 修复 拦截器管道无法重复调用的问题 `await next(request)` 可以调用多次了，详情请查看 `RetryIntercepter`
 
-核心功能：
+## 核心功能：
 - [x] query
   - [x] get
   - [x] post
@@ -32,6 +31,7 @@ Update: 2020/8/30
   - [x] AutoDomainIntercepter 自动添加域名的拦截器，用于将 `/api` 转化为 `http://localhost:8080/api`
   - [x] StatusCodeIntercepter 将statuscode 小于200 或 大于等于400 的请求视为错误，抛出 StatusCodeError
   - [x] TimeoutIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现
+  - [x] RetryIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现
   - [x] 数据模拟
   - [x] 自定义拦截器
 
@@ -122,7 +122,7 @@ import {
     IntercepterResponseContext,
     IntercepterDelegate
 } from "@/intercepter";
-export class AutoDomainIntercepter implements HttpClientIntercepter {
+export class MyDataIntercepter implements HttpClientIntercepter {
     constructor() { }
 
     handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
@@ -150,6 +150,16 @@ export class AutoDomainIntercepter implements HttpClientIntercepter {
         // 只要你不调用 next ， 就不会往下执行，你随时可以阻止往下执行
     }
 }
+
+// 使用
+
+HttpClient.setupDefaults({ 
+  retryCount: 1,
+  timeout:15,
+  statusCodeError:true,
+  baseUrl:"https://localhost:5001"
+ });
+ HttpClient.intercepters.unshift(new MyDataIntercepter()) // 使用unshif 将此拦截器放在最开始的时候
 
 ```
 

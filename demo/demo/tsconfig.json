@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
-    "module": "ESNext",
-    "outDir": "dist",
-    "declaration": true,
+    "target": "esnext",
+    "module": "esnext",
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -12,15 +10,18 @@
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators":true,
     "sourceMap": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "types": [
-      //"webpack-env",
-      "@dcloudio/types/uni-app"
+      "webpack-env",
+      "@dcloudio/types",
+      "miniprogram-api-typings",
+      "mini-types"
     ],
     "paths": {
-      // "@/*": [
-      //   "./src/*"
-      // ]
+      "@/*": [
+        "./src/*"
+      ]
     },
     "lib": [
       "esnext",
@@ -32,9 +33,6 @@
   "exclude": [
     "node_modules",
     "unpackage",
-    "src/**/*.nvue",
-    "dist",
-    "demo"
-  ],
-  "compileOnSave": true
+    "src/**/*.nvue"
+  ]
 }

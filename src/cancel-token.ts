@@ -2,7 +2,7 @@
 // 还有一个就是 CancellationToken 是一个 struct , 它永远不会变成null, 但这在 ts/js 中是无法实现的，所以混合这两者的功能，以便更方面的调用，
 // 但是从原则来讲，使用token 的一方， 不应该调用任何跟 Cancel相关的主动方法, 请看 ICancelToken 和 ICancelSource
 
-import { CancelError } from '@/errors';
+import { CancelError } from './errors';
 
 /**
  * a CancelToken that support safe cancellation

@@ -1,5 +1,9 @@
-import { CancelError } from '@/errors';
+import { CancelError } from '../errors';
 export class AutoDomainIntercepter {
+    /**
+     *
+     * @param factory  return a baseurl, not full url
+     */
     constructor(factory) {
         this.factory = factory;
     }
@@ -20,7 +24,7 @@ export class AutoDomainIntercepter {
                     request.url = "/" + request.url;
                 }
                 let baseUrl = this.factory(request.url);
-                if (baseUrl.lastIndexOf("/") == 0) {
+                if (baseUrl.lastIndexOf("/") == (baseUrl.length - 1)) {
                     baseUrl = baseUrl.substr(0, baseUrl.length - 1);
                 }
                 request.url = baseUrl + request.url;

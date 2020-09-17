@@ -1,8 +1,13 @@
 import { HttpClientIntercepter, IntercepterRequestContext } from './intercepter';
-import { PipeOptions, ResponseData, HttpMethods } from './options';
+import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions } from './options';
 import { IHttpClientHander } from './httpclien-handler';
 export declare class HttpClient {
     static readonly intercepters: HttpClientIntercepter[];
+    /**
+     * 一次性设置所有目前存在的拦截器
+     * @param option 拦截器配置
+     */
+    static setupDefaults(option?: DefaultIntercepterOptions): void;
     get<T = any>(url: string, query?: object | string, header?: any, options?: {
         responseType?: "text" | "arraybuffer";
     }, pipeOptions?: PipeOptions): Promise<T>;

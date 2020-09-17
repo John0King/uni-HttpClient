@@ -1,4 +1,4 @@
-import { StatusCodeError, CancelError } from '@/errors';
+import { StatusCodeError, CancelError } from '../errors';
 /**
  * 如果添加该拦截器， 任何状态码不在200~ 400 之间的状态码将 抛出 @see StatusCodeError
  */
