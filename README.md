@@ -38,7 +38,23 @@
 
 ## 使用方式
 
+
 ```ts
+//===========新功能===========
+// 注意类型 HttpClient 和 实例 httpClient 
+import { HttpClient} from "uni-httpclient"; // 名字具体看你把该库放在哪
+
+// setupDefaults 是 HttpClient 这个类的静态函数
+// 你必须配置以下内容才能将所有的拦截器都打开，如果不配置 其中某个比如 retryCount, 则重试拦截器将不会添加
+HttpClient.setupDefaults({
+    timeout:15,
+    retryCount:1, // 建议重试1次就好
+    statusCodeError:true,
+    baseUrl:"http://localhost:500/api/"
+})
+
+//=======自定义方式=============
+
 //1. 配置 在 main.ts 中配置
 import { HttpClient} from "uni-httpclient"; // 名字具体看你把该库放在哪
 const domainIntercepter = new AutoDomainIntercepter((url)=>{
@@ -108,7 +124,7 @@ httpClient.Get("/api/get")
 ```
 
 StatusCodeIntercepter 产生的错误是 StatusCodeError, 
-
+Cancel 产生的错误是 CancelError
 
 
 ## 模拟数据源
@@ -175,3 +191,4 @@ HttpClient.setupDefaults({
 ```
 
 Powered by [金昇网络](https://www.kingasc.com)
+如果这个库帮助到了您， 请再 github https://github.com/john0king/uni-httpclient 给个star
