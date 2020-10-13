@@ -9,3 +9,5 @@ export { IHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHand
 export { CancelToken, ICancelSource, ICancelToken } from "./cancel-token";
 export { StatusCodeError, CancelError } from "./errors";
 export { TokenStorage, tokenStorage, freshTokenStorage } from "./token-storages/token-storage";
+export { Task } from "./task/task";
+export { TaskSource } from "./task/task-source";

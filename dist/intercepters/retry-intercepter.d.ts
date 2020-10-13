@@ -4,6 +4,7 @@ import { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, 
  */
 export declare class RetryIntercepter implements HttpClientIntercepter {
     defaultRetrycount: number;
-    constructor(defaultRetrycount?: number);
+    defaultRetryDelay: number;
+    constructor(defaultRetrycount?: number, defaultRetryDelay?: number);
     handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext>;
 }

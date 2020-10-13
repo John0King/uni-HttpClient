@@ -8,10 +8,25 @@ import { CancelError } from './errors';
  * a CancelToken that support safe cancellation
  */
 export class CancelToken implements ICancelSource, ICancelToken {
-    constructor(afterms?: number) {
-        if (typeof afterms === "number") {
-            this.cancelAfter(afterms);
+    constructor(token: CancelToken);
+    constructor(token: ICancelToken);
+    constructor(afterms: number);
+    constructor(option?: number | ICancelToken) {
+        if (typeof option === "number") {
+            this.cancelAfter(option);
         }
+        else if (option == null) {
+            return;
+        }
+        else {
+            try {
+                option.register(x => this.cancel());
+            }
+            catch (e) {
+                throw new Error(`argument must be a instace of interface ICancelToken or class CancelToken : ${e}`)
+            }
+        }
+
     }
 
     isCanceled: boolean = false;
@@ -21,6 +36,12 @@ export class CancelToken implements ICancelSource, ICancelToken {
         if (this.isCanceled) {
             throw new CancelError()
         }
+    }
+
+    linkToken(token: CancelToken): void;
+    linkToken(token: ICancelToken): void;
+    linkToken(token: ICancelToken): void {
+        token.register(x => this.cancel());
     }
 
     private _t?: number;
@@ -38,17 +59,8 @@ export class CancelToken implements ICancelSource, ICancelToken {
         return this;
     }
 
-    /** link a @see ICancelSource   and return this  */
-    linkCancel(cancelToken: CancelToken) {
-        cancelToken.register(s => {
-            this.cancel();
-        })
-        return this;
-    }
-
-
     cancel() {
-        if(this.isCanceled == false){
+        if (this.isCanceled == false) {
             this.isCanceled = true;
             this.triggerAction();
         }
@@ -71,6 +83,11 @@ export class CancelToken implements ICancelSource, ICancelToken {
         }
         return this;
     }
+
+    getToken(): CancelToken;
+    getToken(): ICancelToken {
+        return this;
+    }
 }
 
 
@@ -78,12 +95,12 @@ export interface ICancelSource {
     cancelAfter(timems: number): ICancelSource;
     cancel(): void;
     stopCancel(): ICancelSource;
-
+    linkToken(token: ICancelToken): void;
+    getToken(): ICancelToken;
 }
 
 export interface ICancelToken {
     isCanceled: boolean;
     throwIfCanceled(): void;
-    linkCancel(cancelToken: ICancelSource): ICancelToken;
     register(action: (sender: ICancelToken | ICancelSource) => any): ICancelToken
 }

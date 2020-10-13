@@ -29,8 +29,8 @@ export class TimeoutIntercepter {
                 t = t * 1000;
                 let cancel = new CancelToken(t);
                 let ocancel = (_d = request.pipeOptions) === null || _d === void 0 ? void 0 : _d.cancelToken;
-                if (ocancel) {
-                    ocancel.linkCancel(cancel);
+                if (ocancel != null) {
+                    cancel.linkToken(ocancel);
                 }
                 else {
                     request.pipeOptions.cancelToken = cancel;

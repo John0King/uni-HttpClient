@@ -6,17 +6,31 @@ import { CancelError } from './errors';
  * a CancelToken that support safe cancellation
  */
 export class CancelToken {
-    constructor(afterms) {
+    constructor(option) {
         this.isCanceled = false;
         this._actions = [];
-        if (typeof afterms === "number") {
-            this.cancelAfter(afterms);
+        if (typeof option === "number") {
+            this.cancelAfter(option);
+        }
+        else if (option == null) {
+            return;
+        }
+        else {
+            try {
+                option.register(x => this.cancel());
+            }
+            catch (e) {
+                throw new Error(`argument must be a instace of interface ICancelToken or class CancelToken : ${e}`);
+            }
         }
     }
     throwIfCanceled() {
         if (this.isCanceled) {
             throw new CancelError();
         }
+    }
+    linkToken(token) {
+        token.register(x => this.cancel());
     }
     cancelAfter(timems) {
         clearTimeout(this._t);
@@ -27,13 +41,6 @@ export class CancelToken {
     }
     stopCancel() {
         clearTimeout(this._t);
-        return this;
-    }
-    /** link a @see ICancelSource   and return this  */
-    linkCancel(cancelToken) {
-        cancelToken.register(s => {
-            this.cancel();
-        });
         return this;
     }
     cancel() {
@@ -54,6 +61,9 @@ export class CancelToken {
             // already canceled , so only trigger cancel
             this.triggerAction(); // after trigger the action will be remove
         }
+        return this;
+    }
+    getToken() {
         return this;
     }
 }

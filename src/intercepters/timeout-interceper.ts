@@ -8,21 +8,21 @@ export class TimeoutIntercepter implements HttpClientIntercepter {
      * 支持超时的拦截器
      * @param cancelAfterSeconds 全局超时秒数
      */
-    constructor(public cancelAfterSeconds?:number){
+    constructor(public cancelAfterSeconds?: number) {
 
     }
 
     handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
-        if(request.pipeOptions?.cancelToken){
-            if(request.pipeOptions.cancelToken.isCanceled){
-                return new Promise<IntercepterResponseContext>((resolve,reject)=>{
+        if (request.pipeOptions?.cancelToken) {
+            if (request.pipeOptions.cancelToken.isCanceled) {
+                return new Promise<IntercepterResponseContext>((resolve, reject) => {
                     reject(new CancelError());
                 })
             }
         }
         if (request.pipeOptions?.preventTimeout != true) {
-            if(this.cancelAfterSeconds != null && this.cancelAfterSeconds > 0){
-                if(request.pipeOptions == null){
+            if (this.cancelAfterSeconds != null && this.cancelAfterSeconds > 0) {
+                if (request.pipeOptions == null) {
                     request.pipeOptions = {};
                 }
                 request.pipeOptions.timeout = this.cancelAfterSeconds;
@@ -30,11 +30,12 @@ export class TimeoutIntercepter implements HttpClientIntercepter {
 
             if (request.pipeOptions?.timeout != null) {
                 let t = request.pipeOptions.timeout;
+
                 t = t * 1000;
                 let cancel = new CancelToken(t);
                 let ocancel = request.pipeOptions?.cancelToken;
-                if (ocancel) {
-                    ocancel.linkCancel(cancel);
+                if (ocancel != null) {
+                    cancel.linkToken(ocancel);
                 }
                 else {
                     request.pipeOptions.cancelToken = cancel;

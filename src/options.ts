@@ -6,6 +6,8 @@ export interface PipeOptions {
     timeout?: number;
     /**重试次数，默认为1，会重试1次 */
     retryCount?:number;
+    /** 重试间隔 单位毫秒 */
+    retryDelay?:number;
     preventTimeout?: boolean;
     preventAutoDomain?: boolean;
     preventJwtToken?: boolean;
@@ -37,6 +39,8 @@ export type HttpMethods = "OPTIONS"
 export type DefaultIntercepterOptions = {
     /** 重试次数 @see RetryIntercepter */
     retryCount?:number;
+    /** 重试间隔 单位毫秒 */
+    retryDelay?:number;
     /** 超时（秒） */
     timeout?:number;
     /**通过 @see AutoDomainIntercepter 来添加默认地址  */

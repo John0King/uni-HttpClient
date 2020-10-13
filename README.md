@@ -1,14 +1,18 @@
 # uni-httpclient
 
-适用于 uniapp 的 HttpClient.
+[![npm version](https://badgen.net/npm/v/uni-httpclient)](https://www.npmjs.com/package/uni-httpclient)
+[![npm download](https://badgen.net/npm/dt/uni-httpclient)](https://www.npmjs.com/package/uni-httpclient)
+[![GitHub version](https://badgen.net/github/forks/john0king/uni-httpclient)](https://github.com/John0King/uni-HttpClient)
+[![GitHub star](https://badgen.net/github/stars/john0king/uni-httpclient)](https://github.com/John0King/uni-HttpClient)
 
-## Update: 2020/9/17
+适用于 uniapp 的 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
 
-- 新增 `RetryIntercepter` 出错重试
-- 新增 `HttpClient.setupDefaults(option)` 来一次性启用所有的拦截器
-- 修复 使用`@路径` 导致的 定义文件无法使用问题
-- 新增 demo 
-- 修复 拦截器管道无法重复调用的问题 `await next(request)` 可以调用多次了，详情请查看 `RetryIntercepter`
+## Update: 2020/10/14
+
+- 新增 `retryDelay` 选项，重试间隔（`RetryIntercepter`）
+- 新增 `Task`, `TaskSource` 类，解决Promise的设计缺陷
+- 修复 `CancelToken` 的设计问题
+
 
 ## 核心功能：
 - [x] query
@@ -38,6 +42,15 @@
 
 ## 使用方式
 
+### 一、安装
+1. 通过 npm/yarn 安装
+
+```bash
+$> npm install uni-httpclient
+```
+2. 或者通过Hbuild 导入或者从插件市场下载手动安装
+
+### 二、配置
 
 ```ts
 //===========新功能===========
@@ -49,6 +62,7 @@ import { HttpClient} from "uni-httpclient"; // 名字具体看你把该库放在
 HttpClient.setupDefaults({
     timeout:15,
     retryCount:1, // 建议重试1次就好
+    retryDelay:1000, //1秒，默认值
     statusCodeError:true,
     baseUrl:"http://localhost:500/api/"
 })
@@ -83,10 +97,12 @@ HttpClient.intercepters.push(jwtTokenIntercepter)
 
 ```
 
-使用
+### 三、使用
 ```ts
-import { httpClient as http } from "uni-httpclient";
-http.get<any>(`/api/user/info`)
+import { httpClient } from "uni-httpclient";
+// 如果不喜欢 httpClient 这个词, 可以用 as 重命名
+// import { httpClient as http} from "uni-httpclient";
+httpClient.get<any>(`/api/user/info`)
 .then(r=>{
     // 处理返回的数据
 })
@@ -94,7 +110,7 @@ http.get<any>(`/api/user/info`)
 
 ## 取消 / CancelToken 的使用
 除了使用 timeout ， 你可以手动使用 `CancelToken`,
-手动使用 `CancelToken` 无需添加 `TimeoutIntercepter`,添加也不受影响， 当同时使用时， 两者都会发生作用。
+手动使用 `CancelToken` 无需添加 `TimeoutIntercepter`,添加上也不受影响， 当同时使用时， 两者都会发生作用（但只会发生一次）。
 
 ```typescript
 import {CancelToken } from "我们的库地址";
@@ -106,6 +122,45 @@ httpClient.Post("/api/do",null,null,null,{ cancelToken: cancelToken })
 
 cancelToken.cancel();
 
+```
+
+### 详细解释 `CancelToken` (需要了解部分typescript 知识)
+
+`CanelToken` 实现了 `ICancelSource` 和 `ICancelToken`（这两个接口在 js中是不存在的，要了解这个必须了解 typescript interface 是什么,简单的说就是单纯的token 不能调用取消，只有 source 可以调用取消）， 之所以说这个，是希望大家更具体的知道如何替换`CancelToken`,
+比如有一个 `CancelToken` 叫做 `a`是传入的 , 还有一个 `b` 我们自己创建的, 当他们在一起时该怎么处理，首先我们**不应该直接操作`a`**, 因为`a`有自己的事件，而且可能传给了多个function, 正确的做法是 当 `a` 取消时，我们的`b`也取消，如果`a` 没有取消，我们就操作我们的取消
+```typescript
+// 入口
+function main(){
+    let cancel = new CancelToken();
+    cancel.CancelAfter(10 * 1000);//10 秒
+    cancel.register(x=> console.log(`token a cancel 了`))
+    doLongStuff(cancel)
+    .then(()=>console.log(`没有取消`))
+    .cache(e=> console.log(`最终还是取消了`))
+}
+
+function doLongStuff(cancelToken:ICancelToken):Promise<void>{
+    // 我们里面要求 5秒就取消
+    let runningTime = (Math.random() * 20); //随机0-20秒
+    let cancel = new Cancel();
+    setTimeout(()=> cancel.cancel(), 5000);
+    cancel.linkeToken(cancelToken);
+    //这里里面的 cancel 跟外面的没有关系， 里面的取消，并不会导致外面的 取消,但外面的 token取消，会触发里面的取消
+
+
+    return new Promise<void>((resolve,reject)=>{
+        setTimeout(()=>{
+            // 检查自己的token,不要管别的
+            if(cancel.isCanceled){ 
+                reject(`canceled`)
+            }
+            else{
+                resove();
+            }
+        }, runningTime * 1000)
+        
+    })
+}
 ```
 
 ## 错误
@@ -136,33 +191,26 @@ import {
     HttpClientIntercepter,
     IntercepterRequestContext,
     IntercepterResponseContext,
-    IntercepterDelegate
-} from "@/intercepter";
+    IntercepterDelegate,
+    TaskSource,
+    Task
+} from "uni-httpclient";
 export class MyDataIntercepter implements HttpClientIntercepter {
     constructor() { }
 
-    handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
-        return new Promose<IntercepterResponseContext>((resove,reject)=>{
-          setTimeout(()=>{
-            if(request.url == "/api/api1"){
-              resove({
+    async handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
+        await Task.delay(2000); // 延时2秒
+        
+        if(request.url == "/api/api1"){
+            return {
                 httpClient: null ,
                 httpClientHander: null,
                 statusCode: 200,
                 data: { /*您的数据*/ },
                 header: {},
                 pipeOptions:request.pipeOptions
-              })
             }
-            else if(){
-              //......
-            }
-            else{
-              reject(new StatusCodeError(400))
-            }
-            
-          }, 2000); // 延时两秒
-        });
+        }
         // 只要你不调用 next ， 就不会往下执行，你随时可以阻止往下执行
     }
 }

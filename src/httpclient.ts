@@ -15,7 +15,7 @@ export class HttpClient {
      */
     static setupDefaults(option?: DefaultIntercepterOptions) {
         if (option?.retryCount != null && option?.retryCount > 0) {
-            this.intercepters.push(new RetryIntercepter(option.retryCount));
+            this.intercepters.push(new RetryIntercepter(option.retryCount, option?.retryDelay));
         }
         if (option?.baseUrl != null) {
             this.intercepters.push(new AutoDomainIntercepter(url => option.baseUrl as string))

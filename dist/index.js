@@ -8,4 +8,6 @@ export { UniUploadHttpClientHander, UniDownloadHttpClientHander, UniRequestHttpC
 export { CancelToken } from "./cancel-token";
 export { StatusCodeError, CancelError } from "./errors";
 export { TokenStorage, tokenStorage, freshTokenStorage } from "./token-storages/token-storage";
+export { Task } from "./task/task";
+export { TaskSource } from "./task/task-source";
 //# sourceMappingURL=index.js.map

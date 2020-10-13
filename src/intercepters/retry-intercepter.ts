@@ -1,10 +1,11 @@
+import { Task } from '../task/task';
 import { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, IntercepterResponseContext } from '../intercepter';
 
 /**
  * 重试拦截器
  */
 export class RetryIntercepter implements HttpClientIntercepter {
-    constructor(public defaultRetrycount: number = 1) {
+    constructor(public defaultRetrycount: number = 1, public defaultRetryDelay: number = 1000) {
     }
 
     async handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
@@ -12,6 +13,7 @@ export class RetryIntercepter implements HttpClientIntercepter {
             return await next(request);
         }
         let retryCount = request.pipeOptions?.retryCount ?? this.defaultRetrycount;
+        let retryDelay = request.pipeOptions?.retryDelay ?? this.defaultRetryDelay;
         let current = 0;
         let response: IntercepterResponseContext;
         try {
@@ -28,6 +30,9 @@ export class RetryIntercepter implements HttpClientIntercepter {
                         console.log(`error:done retrying.`)
                     }
                     console.log(e);
+                    if(typeof retryDelay === "number"){
+                        await Task.delay(retryDelay);
+                    }
                     if(current >= retryCount){
                         throw e;
                     }
