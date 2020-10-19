@@ -62,9 +62,15 @@ export class Task {
         return task.task;
     }
 
-    fromReult<T = any>(data: T): Promise<T> {
+    static fromReult<T = any>(data: T): Promise<T> {
         let task = new TaskSource<T>();
         task.setResult(data);
+        return task.task;
+    }
+
+    static fromError<T = any>(error: Error | any):Promise<T>{
+        let task = new TaskSource<T>();
+        task.startAction(x=>x.setError(error))
         return task.task;
     }
 }

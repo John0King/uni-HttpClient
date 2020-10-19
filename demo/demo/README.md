@@ -1,11 +1,13 @@
 # demo
 
-## Project setup
+需要把 package.json 中 uni-httpclient 修改成npm上的版本号 （建议使用 yarn）
+然后
 ```
 npm install
+//或者
+yarn
 ```
 
-### Compiles and hot-reloads for development
 ```
 npm run serve
 ```

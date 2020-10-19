@@ -5,6 +5,7 @@ import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
 import { RetryIntercepter } from './intercepters/retry-intercepter';
 import { TimeoutIntercepter } from './intercepters/timeout-interceper';
 import { StatusCodeIntercepter } from './intercepters/statuscode-intercepter';
+import { MaxTimeoutIntercepter } from './intercepters/max-timeout-intercepter';
 
 export class HttpClient {
     static readonly intercepters: HttpClientIntercepter[] = [];
@@ -14,12 +15,18 @@ export class HttpClient {
      * @param option 拦截器配置
      */
     static setupDefaults(option?: DefaultIntercepterOptions) {
-        if (option?.retryCount != null && option?.retryCount > 0) {
-            this.intercepters.push(new RetryIntercepter(option.retryCount, option?.retryDelay));
-        }
         if (option?.baseUrl != null) {
             this.intercepters.push(new AutoDomainIntercepter(url => option.baseUrl as string))
         }
+
+        if (option?.maxTimeout != null) {
+            this.intercepters.push(new MaxTimeoutIntercepter(option.maxTimeout));
+        }
+
+        if (option?.retryCount != null && option?.retryCount > 0) {
+            this.intercepters.push(new RetryIntercepter(option.retryCount, option?.retryDelay));
+        }
+        
         if (option?.timeout != null) {
             this.intercepters.push(new TimeoutIntercepter(option.timeout));
         }
@@ -181,9 +188,10 @@ export class HttpClient {
 
     }
 
-    send<T = any>(request: IntercepterRequestContext, handler: IHttpClientHander): Promise<ResponseData<T>> {
+    send<T = any>(request: IntercepterRequestContext | { pipeOptions?: PipeOptions }, handler: IHttpClientHander): Promise<ResponseData<T>> {
         let pipeline = this.createIntercepterPipeline(handler);
-        return pipeline(request);
+        request.pipeOptions ??= {};
+        return pipeline(request as IntercepterRequestContext);
     }
 
     private createIntercepterPipeline(handler: IHttpClientHander): IntercepterDelegate {

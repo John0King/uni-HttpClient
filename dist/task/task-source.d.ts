@@ -9,4 +9,5 @@ export declare class TaskSource<T = any> {
     readonly task: Promise<T>;
     setResult(value: T): void;
     setError(reason?: any): void;
+    startAction(action: (task: TaskSource) => any): void;
 }

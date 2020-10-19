@@ -15,5 +15,13 @@ export class TaskSource {
     setError(reason) {
         this.reject(reason);
     }
+    startAction(action) {
+        try {
+            action(this);
+        }
+        catch (e) {
+            this.setError(e);
+        }
+    }
 }
 //# sourceMappingURL=task-source.js.map

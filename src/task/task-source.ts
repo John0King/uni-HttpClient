@@ -26,4 +26,13 @@ export class TaskSource<T = any>{
         this.reject(reason);
     }
 
+    startAction(action:(task:TaskSource)=>any){
+        try{
+            action(this);
+        }
+        catch(e){
+            this.setError(e);
+        }
+    }
+
 }

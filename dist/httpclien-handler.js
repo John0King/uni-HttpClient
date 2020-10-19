@@ -1,6 +1,12 @@
 import { CancelError } from './errors';
+import { Task } from './task/task';
+import { CancelToken } from './cancel-token';
 export class UniRequestHttpClientHander {
     send(request, httpClient) {
+        var _a, _b;
+        if ((_b = (_a = request.pipeOptions) === null || _a === void 0 ? void 0 : _a.cancelToken) === null || _b === void 0 ? void 0 : _b.isCanceled) {
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise((resolve, reject) => {
             var _a, _b;
             let task = uni.request({
@@ -47,16 +53,20 @@ export class UniRequestHttpClientHander {
 }
 export class UniUploadHttpClientHander {
     send(request, httpClient) {
+        var _a, _b;
+        if ((_b = (_a = request.pipeOptions) === null || _a === void 0 ? void 0 : _a.cancelToken) === null || _b === void 0 ? void 0 : _b.isCanceled) {
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise((resovle, reject) => {
-            var _a, _b, _c, _d, _e;
+            var _a, _b, _c, _d, _e, _f;
             let task = uni.uploadFile({
                 url: request.url,
                 files: (_a = request.data) === null || _a === void 0 ? void 0 : _a.files,
                 fileType: (_b = request.data) === null || _b === void 0 ? void 0 : _b.fileType,
                 filePath: (_c = request.data) === null || _c === void 0 ? void 0 : _c.filePath,
-                name: request === null || request === void 0 ? void 0 : request.data.name,
+                name: (_d = request.data) === null || _d === void 0 ? void 0 : _d.name,
                 header: request.header,
-                formData: (_d = request.data) === null || _d === void 0 ? void 0 : _d.formData,
+                formData: (_e = request.data) === null || _e === void 0 ? void 0 : _e.formData,
                 success: x => {
                     var _a;
                     let data = x.data;
@@ -88,7 +98,7 @@ export class UniUploadHttpClientHander {
                     reject(e);
                 }
             });
-            if ((_e = request.pipeOptions) === null || _e === void 0 ? void 0 : _e.cancelToken) {
+            if ((_f = request.pipeOptions) === null || _f === void 0 ? void 0 : _f.cancelToken) {
                 let cancelToken = request.pipeOptions.cancelToken;
                 cancelToken.register(x => task.abort());
             }
@@ -98,6 +108,10 @@ export class UniUploadHttpClientHander {
 }
 export class UniDownloadHttpClientHander {
     send(request, httpClient) {
+        var _a, _b;
+        if ((_b = (_a = request.pipeOptions) === null || _a === void 0 ? void 0 : _a.cancelToken) === null || _b === void 0 ? void 0 : _b.isCanceled) {
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise((resolve, reject) => {
             var _a;
             let task = uni.downloadFile({
@@ -110,7 +124,8 @@ export class UniDownloadHttpClientHander {
                         header: (_b = res.header) !== null && _b !== void 0 ? _b : {},
                         data: res.tempFilePath,
                         httpClientHander: this,
-                        httpClient
+                        httpClient,
+                        pipeOptions: request.pipeOptions
                     });
                 },
                 fail: (e) => {

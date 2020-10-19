@@ -13,7 +13,13 @@
         }
     });
 </script>
-
 <style>
     /*每个页面公共css */
+    @media screen and (min-width: 650px) {
+        uni-app{
+            max-width: 650px;
+            margin: auto;
+            background-color: gray;
+        }
+    }
 </style>

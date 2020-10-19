@@ -7,14 +7,17 @@
 
 适用于 uniapp 的 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
 
-## Update: 2020/10/14
+## Update: 2020/10/19
 
-- 新增 `retryDelay` 选项，重试间隔（`RetryIntercepter`）
-- 新增 `Task`, `TaskSource` 类，解决Promise的设计缺陷
-- 修复 `CancelToken` 的设计问题
+- 修复 `TimeoutIntercepter` 在重试的时候不会重置计时器的问题
+- 新增 `Task.fromResult`, `Task.fromError`, `new TaskSource().startAction` 方法， 建议将promise 的操作放到 `startAction` 里面，否则应该使用try-catch。
+- 新增 `MaxTimeoutIntercepter` , 解决重试多次导致 超时被重置后，时间过长的问题
+- 新增 `HttpClient.setupDefaults()` 中 使用 `maxTimeout` 选项， 以及 `httpClietn.get(url,query,header,option, { maxTimeout })`
+- 修复大量的拦截器细微错误
 
 
 ## 核心功能：
+- [x] 配置 `HttpClient.setupDefaults()`
 - [x] query
   - [x] get
   - [x] post
@@ -34,7 +37,8 @@
   - [x] JwtTokenIntercepter Json Web Token 拦截器
   - [x] AutoDomainIntercepter 自动添加域名的拦截器，用于将 `/api` 转化为 `http://localhost:8080/api`
   - [x] StatusCodeIntercepter 将statuscode 小于200 或 大于等于400 的请求视为错误，抛出 StatusCodeError
-  - [x] TimeoutIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现
+  - [x] TimeoutIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现(重试时会重置)
+  - [x] MaxTimeoutIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现（重试时不会重置）
   - [x] RetryIntercepter 简单的实现 timeout, 该拦截器，注入或者链接一个现有的 `CancelToken` 来实现
   - [x] 数据模拟
   - [x] 自定义拦截器
@@ -60,7 +64,8 @@ import { HttpClient} from "uni-httpclient"; // 名字具体看你把该库放在
 // setupDefaults 是 HttpClient 这个类的静态函数
 // 你必须配置以下内容才能将所有的拦截器都打开，如果不配置 其中某个比如 retryCount, 则重试拦截器将不会添加
 HttpClient.setupDefaults({
-    timeout:15,
+    timeout:10,
+    maxTimeout:15,
     retryCount:1, // 建议重试1次就好
     retryDelay:1000, //1秒，默认值
     statusCodeError:true,

@@ -16,5 +16,6 @@ export declare class Task {
      * @param tasks 一个promise 数组
      */
     static whenAll(tasks: Promise<any>[]): Promise<void>;
-    fromReult<T = any>(data: T): Promise<T>;
+    static fromReult<T = any>(data: T): Promise<T>;
+    static fromError<T = any>(error: Error | any): Promise<T>;
 }

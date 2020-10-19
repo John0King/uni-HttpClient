@@ -1,5 +1,7 @@
 <template>
-    <view>{{txt}}
+    <view>
+        <view>Foo Component</view>
+        <view>{{txt}}</view>
     </view>
 </template>
 <script lang="ts">

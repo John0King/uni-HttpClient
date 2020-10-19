@@ -47,7 +47,9 @@ export declare class HttpClient {
     request<T = any>(url: string, method: HttpMethods, data?: any, header?: any, options?: {
         responseType?: "text" | "arraybuffer";
     }, pipeOptions?: PipeOptions): Promise<ResponseData<T>>;
-    send<T = any>(request: IntercepterRequestContext, handler: IHttpClientHander): Promise<ResponseData<T>>;
+    send<T = any>(request: IntercepterRequestContext | {
+        pipeOptions?: PipeOptions;
+    }, handler: IHttpClientHander): Promise<ResponseData<T>>;
     private createIntercepterPipeline;
 }
 export declare const httpClient: HttpClient;

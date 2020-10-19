@@ -3,17 +3,21 @@ import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
 import { RetryIntercepter } from './intercepters/retry-intercepter';
 import { TimeoutIntercepter } from './intercepters/timeout-interceper';
 import { StatusCodeIntercepter } from './intercepters/statuscode-intercepter';
+import { MaxTimeoutIntercepter } from './intercepters/max-timeout-intercepter';
 export class HttpClient {
     /**
      * 一次性设置所有目前存在的拦截器
      * @param option 拦截器配置
      */
     static setupDefaults(option) {
-        if ((option === null || option === void 0 ? void 0 : option.retryCount) != null && (option === null || option === void 0 ? void 0 : option.retryCount) > 0) {
-            this.intercepters.push(new RetryIntercepter(option.retryCount, option === null || option === void 0 ? void 0 : option.retryDelay));
-        }
         if ((option === null || option === void 0 ? void 0 : option.baseUrl) != null) {
             this.intercepters.push(new AutoDomainIntercepter(url => option.baseUrl));
+        }
+        if ((option === null || option === void 0 ? void 0 : option.maxTimeout) != null) {
+            this.intercepters.push(new MaxTimeoutIntercepter(option.maxTimeout));
+        }
+        if ((option === null || option === void 0 ? void 0 : option.retryCount) != null && (option === null || option === void 0 ? void 0 : option.retryCount) > 0) {
+            this.intercepters.push(new RetryIntercepter(option.retryCount, option === null || option === void 0 ? void 0 : option.retryDelay));
         }
         if ((option === null || option === void 0 ? void 0 : option.timeout) != null) {
             this.intercepters.push(new TimeoutIntercepter(option.timeout));
@@ -94,7 +98,9 @@ export class HttpClient {
         }, new UniRequestHttpClientHander());
     }
     send(request, handler) {
+        var _a;
         let pipeline = this.createIntercepterPipeline(handler);
+        (_a = request.pipeOptions) !== null && _a !== void 0 ? _a : (request.pipeOptions = {});
         return pipeline(request);
     }
     createIntercepterPipeline(handler) {

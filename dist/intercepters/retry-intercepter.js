@@ -1,4 +1,5 @@
 import { Task } from '../task/task';
+import { CancelError } from '../errors';
 /**
  * 重试拦截器
  */
@@ -23,11 +24,15 @@ export class RetryIntercepter {
                     return response;
                 }
                 catch (e) {
+                    if (e instanceof CancelError) {
+                        console.log(`retry cancel`);
+                        throw e;
+                    }
                     if (current < retryCount) {
-                        console.log(`error:retrying...`);
+                        console.log(`error:retrying(${current}/${retryCount})...`);
                     }
                     else {
-                        console.log(`error:done retrying.`);
+                        console.log(`error:done retrying(${current}/${retryCount}).`);
                     }
                     console.log(e);
                     if (typeof retryDelay === "number") {

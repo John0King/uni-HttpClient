@@ -1,6 +1,8 @@
 import { IntercepterRequestContext, IntercepterResponseContext } from "./intercepter";
 import { HttpClient } from './httpclient';
 import { CancelError } from './errors';
+import { Task } from './task/task';
+import { CancelToken } from './cancel-token';
 
 export interface IHttpClientHander {
     send(request: IntercepterRequestContext, httpClient: HttpClient): Promise<IntercepterResponseContext>;
@@ -10,6 +12,9 @@ export interface IHttpClientHander {
 export class UniRequestHttpClientHander implements IHttpClientHander {
 
     send(request: IntercepterRequestContext, httpClient: HttpClient): Promise<IntercepterResponseContext> {
+        if(request.pipeOptions?.cancelToken?.isCanceled){
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise<IntercepterResponseContext>((resolve, reject) => {
             let task = uni.request({
                 url: request.url,
@@ -58,13 +63,16 @@ export class UniRequestHttpClientHander implements IHttpClientHander {
 
 export class UniUploadHttpClientHander implements IHttpClientHander {
     send(request: IntercepterRequestContext, httpClient: HttpClient): Promise<IntercepterResponseContext> {
+        if(request.pipeOptions?.cancelToken?.isCanceled){
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise<IntercepterResponseContext>((resovle, reject) => {
             let task = uni.uploadFile({
                 url: request.url,
                 files: request.data?.files,
                 fileType: request.data?.fileType,
                 filePath: request.data?.filePath,
-                name: request?.data.name,
+                name: request.data?.name,
                 header: request.header,
                 formData: request.data?.formData,
 
@@ -109,6 +117,9 @@ export class UniUploadHttpClientHander implements IHttpClientHander {
 
 export class UniDownloadHttpClientHander implements IHttpClientHander {
     send(request: IntercepterRequestContext, httpClient: HttpClient): Promise<IntercepterResponseContext> {
+        if(request.pipeOptions?.cancelToken?.isCanceled){
+            return Task.fromError(new CancelToken());
+        }
         const p = new Promise<IntercepterResponseContext>((resolve,reject)=>{
             
             let task = uni.downloadFile({
@@ -120,7 +131,8 @@ export class UniDownloadHttpClientHander implements IHttpClientHander {
                         header: (res as any).header ?? {},
                         data : res.tempFilePath,
                         httpClientHander: this,
-                        httpClient
+                        httpClient,
+                        pipeOptions:request.pipeOptions
                     })
                 },
                 fail: (e)=>{

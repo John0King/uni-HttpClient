@@ -2,6 +2,7 @@
  * a CancelToken that support safe cancellation
  */
 export declare class CancelToken implements ICancelSource, ICancelToken {
+    constructor();
     constructor(token: CancelToken);
     constructor(token: ICancelToken);
     constructor(afterms: number);
@@ -28,5 +29,5 @@ export interface ICancelSource {
 export interface ICancelToken {
     isCanceled: boolean;
     throwIfCanceled(): void;
-    register(action: (sender: ICancelToken | ICancelSource) => any): ICancelToken;
+    register(action: (sender: ICancelToken) => any): ICancelToken;
 }

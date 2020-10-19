@@ -2,8 +2,10 @@ import { ICancelToken } from './cancel-token';
 
 export interface PipeOptions {
     cancelToken?: ICancelToken;
-    /** 秒数， 必须添加 超时拦截器才管用 */
+    /** 秒数， 必须添加 @see TimeoutIntercepter 才管用 */
     timeout?: number;
+    /** 秒数，必须添加 @see MaxTimeoutIntercepter 才管用 */
+    maxTimeout?:number;
     /**重试次数，默认为1，会重试1次 */
     retryCount?:number;
     /** 重试间隔 单位毫秒 */
@@ -43,6 +45,8 @@ export type DefaultIntercepterOptions = {
     retryDelay?:number;
     /** 超时（秒） */
     timeout?:number;
+    /** 最大超时（秒） */
+    maxTimeout?:number;
     /**通过 @see AutoDomainIntercepter 来添加默认地址  */
     baseUrl?:string;
     /** 启用 @see StatusCodeIntercepter */

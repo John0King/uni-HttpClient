@@ -10,7 +10,7 @@ export interface IntercepterRequestContext {
     header?: any;
     data?: any;
     responseType?: "text" | "arraybuffer";
-    pipeOptions?: PipeOptions;
+    pipeOptions: PipeOptions;
 }
 export interface IntercepterResponseContext {
     httpClient: HttpClient;
@@ -19,7 +19,7 @@ export interface IntercepterResponseContext {
     data: any;
     error?: any;
     header: any;
-    pipeOptions?: PipeOptions;
+    pipeOptions: PipeOptions;
 }
 export interface IntercepterDelegate {
     (request: IntercepterRequestContext): Promise<IntercepterResponseContext>;

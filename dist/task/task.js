@@ -56,9 +56,14 @@ export class Task {
         });
         return task.task;
     }
-    fromReult(data) {
+    static fromReult(data) {
         let task = new TaskSource();
         task.setResult(data);
+        return task.task;
+    }
+    static fromError(error) {
+        let task = new TaskSource();
+        task.startAction(x => x.setError(error));
         return task.task;
     }
 }

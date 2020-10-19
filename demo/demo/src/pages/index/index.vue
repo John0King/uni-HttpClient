@@ -1,39 +1,28 @@
 <template>
 	<view class="content">
-        <image class="logo" src="../../static/logo.png"></image>
-		<view>
-            <text class="title">{{title}}</text>
-			<view>{{dt}}</view>
-			<foo-page ref="foo"></foo-page>
-        </view>
+        <demo-1 :prop1="'哈哈哈'"></demo-1>
+        <demo-2></demo-2>
+        <demo-3></demo-3>
+        <foo-page ref="foo"></foo-page>
 	</view>
 </template>
 
 <script lang="ts">
 import { httpClient } from 'uni-httpclient/dist/httpclient';
 	import { Vue,Component, Ref } from "vue-property-decorator";
-	import {default as FooPage} from "../Foo.vue";
+    import {default as FooPage} from "../../components/Foo.vue";
+    import {default as Demo1} from '../../components/demo1.vue';
+    import {default as Demo2} from '../../components/demo2.vue';
+    import Demo3 from '../../components/demo3.vue';
 
 	@Component({
-		components:{ FooPage}
+		components:{ FooPage, Demo1, Demo2, Demo3}
 	})
 	export default class  IndexPage extends Vue{
 		title:string = "hello";
 		dt:any = "";
 		onLoad() {
-			this.title += " world";
-			 httpClient.get(`/index.html`)
-			 .then((x:any)=>{
-				 this.dt = x;
-			 })
-			 .catch(x=>{
-				 console.log(`error`);
-				 console.log(x)
-			 })
-
-			 setTimeout(()=>{
-				 this.foo.setTxt();
-			 },5000)
+			setTimeout(()=> this.foo.setTxt(),1000);
 			 
 		}
 		@Ref("foo")
@@ -43,26 +32,6 @@ import { httpClient } from 'uni-httpclient/dist/httpclient';
 </script>
 
 <style>
-	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
 
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin: 200rpx auto 50rpx auto;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	}
+	
 </style>

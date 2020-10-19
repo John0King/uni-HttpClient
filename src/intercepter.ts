@@ -15,7 +15,7 @@ export interface IntercepterRequestContext {
     header?: any;
     data?: any;
     responseType?: "text" | "arraybuffer";
-    pipeOptions?:PipeOptions
+    pipeOptions:PipeOptions
 }
 
 export interface IntercepterResponseContext {
@@ -25,7 +25,7 @@ export interface IntercepterResponseContext {
     data: any;
     error?: any;
     header: any;
-    pipeOptions?:PipeOptions
+    pipeOptions:PipeOptions
 }
 
 export interface IntercepterDelegate{
