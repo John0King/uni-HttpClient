@@ -1,4 +1,4 @@
-import { UniRequestHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander } from './httpclien-handler';
+import { UniRequestHttpClientHandler, UniUploadHttpClientHandler, UniDownloadHttpClientHandler } from "./handlers/uni-handler";
 import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
 import { RetryIntercepter } from './intercepters/retry-intercepter';
 import { TimeoutIntercepter } from './intercepters/timeout-interceper';
@@ -68,7 +68,7 @@ export class HttpClient {
             data,
             header,
             pipeOptions
-        }, new UniUploadHttpClientHander());
+        }, new UniUploadHttpClientHandler());
     }
     download(url, header, options, pipeOptions) {
         return this.send({
@@ -77,7 +77,7 @@ export class HttpClient {
             header,
             responseType: options === null || options === void 0 ? void 0 : options.responseType,
             pipeOptions
-        }, new UniDownloadHttpClientHander());
+        }, new UniDownloadHttpClientHandler());
     }
     /**
      * 全能的请求
@@ -95,7 +95,7 @@ export class HttpClient {
             header,
             responseType: options === null || options === void 0 ? void 0 : options.responseType,
             pipeOptions
-        }, new UniRequestHttpClientHander());
+        }, new UniRequestHttpClientHandler());
     }
     send(request, handler) {
         var _a;

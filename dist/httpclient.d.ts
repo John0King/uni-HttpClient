@@ -1,6 +1,6 @@
 import { HttpClientIntercepter, IntercepterRequestContext } from './intercepter';
 import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions } from './options';
-import { IHttpClientHander } from './httpclien-handler';
+import { IHttpClientHandler } from './httpclien-handler';
 export declare class HttpClient {
     static readonly intercepters: HttpClientIntercepter[];
     /**
@@ -49,7 +49,7 @@ export declare class HttpClient {
     }, pipeOptions?: PipeOptions): Promise<ResponseData<T>>;
     send<T = any>(request: IntercepterRequestContext | {
         pipeOptions?: PipeOptions;
-    }, handler: IHttpClientHander): Promise<ResponseData<T>>;
+    }, handler: IHttpClientHandler): Promise<ResponseData<T>>;
     private createIntercepterPipeline;
 }
 export declare const httpClient: HttpClient;

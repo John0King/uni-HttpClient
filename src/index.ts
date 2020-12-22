@@ -12,7 +12,9 @@ export { TimeoutIntercepter } from "./intercepters/timeout-interceper";
 
 export { RetryIntercepter } from "./intercepters/retry-intercepter";
 
-export { IHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander, UniRequestHttpClientHander } from "./httpclien-handler";
+export { IHttpClientHandler } from "./httpclien-handler";
+
+export { UniUploadHttpClientHandler, UniDownloadHttpClientHandler, UniRequestHttpClientHandler } from "./handlers/uni-handler";
 
 export { CancelToken, ICancelSource, ICancelToken } from "./cancel-token"
 
@@ -22,3 +24,4 @@ export { TokenStorage, tokenStorage, freshTokenStorage } from "./token-storages/
 
 export { Task } from "./task/task";
 export { TaskSource } from "./task/task-source";
+export { Url } from "./url";

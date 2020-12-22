@@ -5,7 +5,7 @@
  */
 export class TaskSource<T = any>{
 
-    private resolve!: (value?: T) => void;
+    private resolve!: (value: T) => void;
     private reject!: (reason?: any) => void;
 
 

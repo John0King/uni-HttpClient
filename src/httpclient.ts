@@ -1,6 +1,7 @@
 import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from './intercepter';
 import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions } from './options';
-import { IHttpClientHander, UniRequestHttpClientHander, UniUploadHttpClientHander, UniDownloadHttpClientHander } from './httpclien-handler';
+import { IHttpClientHandler } from './httpclien-handler';
+import { UniRequestHttpClientHandler, UniUploadHttpClientHandler, UniDownloadHttpClientHandler } from "./handlers/uni-handler";
 import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
 import { RetryIntercepter } from './intercepters/retry-intercepter';
 import { TimeoutIntercepter } from './intercepters/timeout-interceper';
@@ -141,7 +142,7 @@ export class HttpClient {
             data,
             header,
             pipeOptions
-        }, new UniUploadHttpClientHander())
+        }, new UniUploadHttpClientHandler())
     }
 
     download<T = string>(url: string,
@@ -156,7 +157,7 @@ export class HttpClient {
             header,
             responseType: options?.responseType,
             pipeOptions
-        }, new UniDownloadHttpClientHander())
+        }, new UniDownloadHttpClientHandler())
     }
 
     /**
@@ -184,21 +185,21 @@ export class HttpClient {
             header,
             responseType: options?.responseType,
             pipeOptions
-        }, new UniRequestHttpClientHander());
+        }, new UniRequestHttpClientHandler());
 
     }
 
-    send<T = any>(request: IntercepterRequestContext | { pipeOptions?: PipeOptions }, handler: IHttpClientHander): Promise<ResponseData<T>> {
+    send<T = any>(request: IntercepterRequestContext | { pipeOptions?: PipeOptions }, handler: IHttpClientHandler): Promise<ResponseData<T>> {
         let pipeline = this.createIntercepterPipeline(handler);
         request.pipeOptions ??= {};
         return pipeline(request as IntercepterRequestContext);
     }
 
-    private createIntercepterPipeline(handler: IHttpClientHander): IntercepterDelegate {
+    private createIntercepterPipeline(handler: IHttpClientHandler): IntercepterDelegate {
 
         let client = this;
         class HandlerIntercepter implements HttpClientIntercepter {
-            constructor(private handler: IHttpClientHander, private client: HttpClient) { }
+            constructor(private handler: IHttpClientHandler, private client: HttpClient) { }
             handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext> {
                 return this.handler.send(request, this.client);
             }

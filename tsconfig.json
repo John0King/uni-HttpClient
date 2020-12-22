@@ -6,13 +6,15 @@
     "declaration": true,
     "strict": true,
     "jsx": "preserve",
-    "importHelpers": true,
+    "importHelpers": false,
+    //"noEmitHelpers": false,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "experimentalDecorators":true,
     "sourceMap": true,
     "baseUrl": ".",
+    "skipLibCheck": true,
     "types": [
       //"webpack-env",
       "@dcloudio/types/uni-app"

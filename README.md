@@ -7,14 +7,26 @@
 
 适用于 uniapp 的 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
 
-## Update: 2020/10/19
+## Update: 2020/12/22
 
-- 修复 `TimeoutIntercepter` 在重试的时候不会重置计时器的问题
-- 新增 `Task.fromResult`, `Task.fromError`, `new TaskSource().startAction` 方法， 建议将promise 的操作放到 `startAction` 里面，否则应该使用try-catch。
-- 新增 `MaxTimeoutIntercepter` , 解决重试多次导致 超时被重置后，时间过长的问题
-- 新增 `HttpClient.setupDefaults()` 中 使用 `maxTimeout` 选项， 以及 `httpClietn.get(url,query,header,option, { maxTimeout })`
-- 修复大量的拦截器细微错误
+- `[new]` ----新增`Url` 解析类，用来拼接和检查url非常方便，妈妈再也不用担心怎么拼接url  
+- `[fix]` ---- 修复`Uni*ClientHandler` 提前取消时返回 `new CancelError()`
+- `[break-change]`---- 重命名 `IHttpClientHander` => `IHttpClientHandler`,  以及相关的 UniRequestClientHandler等
 
+#### url 操作
+```ts
+// 拼接
+ var urlstr = new Url('http://www.baidu.com').add(new Url('/?wd=uni-httpclient')).toString();
+ //检查
+ var url = new Url(urlstr);
+ console.log(url.scheme) // http
+ console.log(url.domain)  // www.baidu.com
+ console.log(url.path) //  /
+ console.log(url.queryString) //  ?wd=uni-httpclient
+ console.log(url.pathAndQuery) // /?wd=uni-httpclient
+ url.query['pn'] = 10
+ console.log(url.toString())   // http://www.baidu.com/?wd=uni-httpclient&pn=10
+```
 
 ## 核心功能：
 - [x] 配置 `HttpClient.setupDefaults()`
