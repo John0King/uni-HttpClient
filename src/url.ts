@@ -70,11 +70,8 @@ export class Url {
         if (this.path == null && this.queryString == null) {
             return null;
         }
-        if (this.queryString == null) {
-            return this.path;
-        }
 
-        return `${this.path ?? '/'}${this.queryString ?? ''}`;
+        return `${this.path ?? ''}${this.queryString ?? ''}`;
     }
     set pathAndQuery(value: string | null) {
         this.parsePathAndQuery(value);
@@ -147,7 +144,7 @@ export class Url {
 
     toString(): string {
         if (this.isAbsolute) {
-            return `${this.scheme}://${this.host}${this.pathAndQuery ?? ''}`;
+            return `${this.scheme}://${this.host}${this.path == null && this.hasQuery ? '/' : ''}${this.pathAndQuery ?? ''}`;
         }
         return this.pathAndQuery ?? '';
     }
@@ -178,13 +175,16 @@ export class Url {
         const kvpair = queryString.split('&');
         if (kvpair.length > 0) {
             this.query = {};
-            for(let v of kvpair){
+            for (let v of kvpair) {
                 const pos = v.indexOf('=');
                 if (pos < 0) {
                     return;
                 }
                 this.query[decodeURIComponent(v.substr(0, pos))] = decodeURIComponent(v.substr(pos + 1));
             }
+        }
+        else {
+            this.query = null;
         }
 
     }

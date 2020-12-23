@@ -76,10 +76,7 @@ export class Url {
         if (this.path == null && this.queryString == null) {
             return null;
         }
-        if (this.queryString == null) {
-            return this.path;
-        }
-        return `${(_a = this.path) !== null && _a !== void 0 ? _a : '/'}${(_b = this.queryString) !== null && _b !== void 0 ? _b : ''}`;
+        return `${(_a = this.path) !== null && _a !== void 0 ? _a : ''}${(_b = this.queryString) !== null && _b !== void 0 ? _b : ''}`;
     }
     set pathAndQuery(value) {
         this.parsePathAndQuery(value);
@@ -144,7 +141,7 @@ export class Url {
     toString() {
         var _a, _b;
         if (this.isAbsolute) {
-            return `${this.scheme}://${this.host}${(_a = this.pathAndQuery) !== null && _a !== void 0 ? _a : ''}`;
+            return `${this.scheme}://${this.host}${this.path == null && this.hasQuery ? '/' : ''}${(_a = this.pathAndQuery) !== null && _a !== void 0 ? _a : ''}`;
         }
         return (_b = this.pathAndQuery) !== null && _b !== void 0 ? _b : '';
     }
@@ -180,6 +177,9 @@ export class Url {
                 }
                 this.query[decodeURIComponent(v.substr(0, pos))] = decodeURIComponent(v.substr(pos + 1));
             }
+        }
+        else {
+            this.query = null;
         }
     }
     /** return a new Url */
