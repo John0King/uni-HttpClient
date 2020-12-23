@@ -175,7 +175,7 @@ export class Url {
         const kvpair = queryString.split('&');
         if (kvpair.length > 0) {
             this.query = {};
-            for (let v of kvpair) {
+            for (const v of kvpair) {
                 const pos = v.indexOf('=');
                 if (pos < 0) {
                     return;
@@ -196,10 +196,13 @@ export class Url {
         }
         if (this.hasQuery) {
             if (url.isQuery) {
-                let u = this.clone();
+                const u = this.clone();
                 u.query ??= {};
-                for (let name in url.query) {
-                    u.query[name] = url.query[name]
+                for (const name in url.query) {
+                    if (url.query.hasOwnProperty(name)) {
+                        u.query[name] = url.query[name];
+                    }
+
                 }
                 return u;
             }
@@ -216,7 +219,7 @@ export class Url {
             if (!afterUrl.startsWith('/')) {
                 afterUrl = '/' + afterUrl;
             }
-            return new Url(`${this.toString()}${url.toString()}`);
+            return new Url(`${thisUrl}${afterUrl}`);
         }
     }
 

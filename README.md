@@ -13,6 +13,12 @@
 - `[fix]` ---- 修复`Uni*ClientHandler` 提前取消时返回 `new CancelError()`
 - `[break-change]`---- 重命名 `IHttpClientHander` => `IHttpClientHandler`,  以及相关的 UniRequestClientHandler等
 
+----------------
+v1.3.2 
+- `[fix]` --- 修复Url 解析类的 `pathAndQuery` 会对仅包含`query`的Url增加'/' 的问题， 当 `toString()`时，如果 `isAbsolute` 为`true`,则仍会增加‘/’ 以纠正地址生成
+v1.3.3
+- `[fix]` --- 修复 `Url.add()` 的代码问题 
+
 #### url 操作
 ```ts
 // 拼接
