@@ -173,13 +173,13 @@ export class Url {
         const kvpair = queryString.split('&');
         if (kvpair.length > 0) {
             this.query = {};
-            kvpair.forEach(v => {
+            for (let v of kvpair) {
                 const pos = v.indexOf('=');
                 if (pos < 0) {
                     return;
                 }
                 this.query[decodeURIComponent(v.substr(0, pos))] = decodeURIComponent(v.substr(pos + 1));
-            });
+            }
         }
     }
     /** return a new Url */
