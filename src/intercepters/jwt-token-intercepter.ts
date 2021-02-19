@@ -27,7 +27,9 @@ export class JwtTokenIntercepter implements HttpClientIntercepter {
                 //console.log(token);
                 if( token instanceof Promise){
                     return token.then(t=>{
-                        request.header[AuthKey] = `Bearer ${t}`
+                        if(t != null && t != ''){
+                            request.header[AuthKey] = `Bearer ${t}`
+                        }
                     }).then(()=> next(request));
                 }
                 else if (token != null) {

@@ -7,19 +7,14 @@
 
 适用于 uniapp 的 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
 
-## Update: 2020/12/22
+## Update: 2021/2/19
+#### v1.3.4
 
-- `[new]` ----新增`Url` 解析类，用来拼接和检查url非常方便，妈妈再也不用担心怎么拼接url  
-- `[fix]` ---- 修复`Uni*ClientHandler` 提前取消时返回 `new CancelError()`
-- `[break-change]`---- 重命名 `IHttpClientHander` => `IHttpClientHandler`,  以及相关的 UniRequestClientHandler等
+- 修复#7 setupDefault 导致的 StatusCode拦截器未添加到拦截器管道的问题
+- 修复 #5 `Promose<null>` 的 null 值 token 不被忽略的问题
 
-----------------
-v1.3.2 
-- `[fix]` --- 修复Url 解析类的 `pathAndQuery` 会对仅包含`query`的Url增加'/' 的问题， 当 `toString()`时，如果 `isAbsolute` 为`true`,则仍会增加‘/’ 以纠正地址生成
-v1.3.3
-- `[fix]` --- 修复 `Url.add()` 的代码问题 
+### url 操作
 
-#### url 操作
 ```ts
 // 拼接
  var urlstr = new Url('http://www.baidu.com').add(new Url('/?wd=uni-httpclient')).toString();
