@@ -32,7 +32,7 @@ export class HttpClient {
             this.intercepters.push(new TimeoutIntercepter(option.timeout));
         }
 
-        if (option?.statusCodeError != true) {
+        if (option?.statusCodeError == true) {
             this.intercepters.push(new StatusCodeIntercepter());
         }
     }

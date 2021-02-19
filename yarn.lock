@@ -3,14 +3,14 @@
 
 
 "@dcloudio/types@*":
-  version "2.0.20"
-  resolved "https://registry.npm.taobao.org/@dcloudio/types/download/@dcloudio/types-2.0.20.tgz#2b1129a398b65b07b7da75d9f331056c55557256"
-  integrity sha1-KxEpo5i2Wwe32nXZ8zEFbFVVclY=
+  version "2.0.22"
+  resolved "https://registry.npm.taobao.org/@dcloudio/types/download/@dcloudio/types-2.0.22.tgz#b2be8d512628f36d20297fe8702ef66189276859"
+  integrity sha1-sr6NUSYo820gKX/ocC72YYknaFk=
 
 typescript@*:
-  version "4.1.3"
-  resolved "https://registry.npm.taobao.org/typescript/download/typescript-4.1.3.tgz#519d582bd94cba0cf8934c7d8e8467e473f53bb7"
-  integrity sha1-UZ1YK9lMugz4k0x9joRn5HP1O7c=
+  version "4.1.5"
+  resolved "https://registry.npm.taobao.org/typescript/download/typescript-4.1.5.tgz#123a3b214aaff3be32926f0d8f1f6e704eb89a72"
+  integrity sha1-Ejo7IUqv874ykm8Njx9ucE64mnI=
 
 vue@2.6.12:
   version "2.6.12"

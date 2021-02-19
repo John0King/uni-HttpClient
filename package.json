@@ -10,7 +10,7 @@
   "author": "john0king",
   "scripts": {
     "build": "tsc",
-    "pack":"yarn run build && yarn pack"
+    "pack": "yarn run build && yarn pack"
   },
   "repository": "https://github.com/John0King/uni-HttpClient",
   "license": "MIT",

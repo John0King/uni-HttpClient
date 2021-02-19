@@ -22,7 +22,7 @@ export class HttpClient {
         if ((option === null || option === void 0 ? void 0 : option.timeout) != null) {
             this.intercepters.push(new TimeoutIntercepter(option.timeout));
         }
-        if ((option === null || option === void 0 ? void 0 : option.statusCodeError) != true) {
+        if ((option === null || option === void 0 ? void 0 : option.statusCodeError) == true) {
             this.intercepters.push(new StatusCodeIntercepter());
         }
     }
