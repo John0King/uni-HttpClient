@@ -1,6 +1,6 @@
 <template>
     <view class="section">
-        <view class="h1">Demo3: timeout </view>
+        <view class="h1">Demo2: timeout </view>
         <view class="result">{{result}}</view>
         <view class="result">{{tempPath}}</view>
     </view>
@@ -15,7 +15,10 @@ export default class Demo2 extends Vue{
     result:string = '';
     tempPath:string = '';
     mounted(){
-        httpClient.get<string>(`/demo2.html`,{},{},{},{ timeout:1 }) // 1秒超时, 全局15秒，这里重写
+        httpClient.get<string>({
+            url: `/demo2.html`,
+            pipeOptions:{ timeout:1 }// 1秒超时, 全局15秒，这里重写
+            }) 
         .then(x=>this.result = x)
         .catch(x=> this.result = JSON.stringify(x))
     }

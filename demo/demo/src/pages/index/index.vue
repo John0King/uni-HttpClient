@@ -1,8 +1,9 @@
 <template>
 	<view class="content">
-        <demo-1 :prop1="'哈哈哈'"></demo-1>
+        <demo-1 :prop1="'每个demo,请查看源码'"></demo-1>
         <demo-2></demo-2>
         <demo-3></demo-3>
+		<demo-4></demo-4>
         <foo-page ref="foo"></foo-page>
 	</view>
 </template>
@@ -14,9 +15,10 @@ import { httpClient } from 'uni-httpclient/dist/httpclient';
     import {default as Demo1} from '../../components/demo1.vue';
     import {default as Demo2} from '../../components/demo2.vue';
     import Demo3 from '../../components/demo3.vue';
+	import Demo4 from '../../components/demo4.vue';
 
 	@Component({
-		components:{ FooPage, Demo1, Demo2, Demo3}
+		components:{ FooPage, Demo1, Demo2, Demo3, Demo4}
 	})
 	export default class  IndexPage extends Vue{
 		title:string = "hello";

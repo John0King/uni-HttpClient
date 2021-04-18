@@ -3,7 +3,8 @@ import { HttpClient } from '../httpclient';
 import { CancelError } from '../errors';
 import { Task } from '../task/task';
 import { IHttpClientHandler } from "../httpclien-handler";
-
+declare let wx:UniApp.Uni;
+const app = uni || wx;
 
 /** uni 的 GET POST PUT OPTION 等操作的 处理终端 */
 export class UniRequestHttpClientHandler implements IHttpClientHandler {
@@ -13,7 +14,7 @@ export class UniRequestHttpClientHandler implements IHttpClientHandler {
             return Task.fromError(new CancelError());
         }
         const p = new Promise<IntercepterResponseContext>((resolve, reject) => {
-            let task = uni.request({
+            let task = app.request({
                 url: request.url,
                 method: request.method,
                 data: request.data,
@@ -64,7 +65,7 @@ export class UniUploadHttpClientHandler implements IHttpClientHandler {
             return Task.fromError(new CancelError());
         }
         const p = new Promise<IntercepterResponseContext>((resovle, reject) => {
-            let task = uni.uploadFile({
+            let task = app.uploadFile({
                 url: request.url,
                 files: request.data?.files,
                 fileType: request.data?.fileType,
@@ -120,7 +121,7 @@ export class UniDownloadHttpClientHandler implements IHttpClientHandler {
         }
         const p = new Promise<IntercepterResponseContext>((resolve, reject) => {
 
-            let task = uni.downloadFile({
+            let task = app.downloadFile({
                 url: request.url,
                 header: request.header,
                 success: res => {

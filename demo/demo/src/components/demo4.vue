@@ -1,40 +1,43 @@
 <template>
     <view class="section">
-         <view>传入：{{prop1}}</view>
-        <view class="h1">Demo1: 常规使用</view>
-       
+        <view class="h1">Demo4: 拦截器 （多刷新几次看看）</view>
         <view class="result">{{result}}</view>
     </view>
     
 </template>
 <script lang="ts">
-import {Vue,Component, Prop} from 'vue-property-decorator'
-import {httpClient, StatusCodeError, CancelError} from 'uni-httpclient'
+import {Vue,Component} from 'vue-property-decorator'
+import {httpClient,CancelError, CancelToken, StatusCodeError } from 'uni-httpclient'
 
 @Component
 export default class Demo1 extends Vue{
     result:string = '';
-    @Prop({default:'-----'})
-    prop1!:string
+    cancelToken :CancelToken = new CancelToken();
     mounted(){
-        httpClient.get<string>({ 
-            url:`https://www.baidu.com/demo1.html`
+        
+        httpClient.get<string>({
+            url:'/demo4.html',
+            pipeOptions:{
+                useMyAuth:true,// 根据拦截的约定，这样将启用拦截器,
+                preventRetry:true // 不要重试了
+            }
         })
         .then(x=>this.result = x)
         .catch(e=> {
             if(e instanceof StatusCodeError){
                 this.result = `##返回代码错误：${e.statusCode}`
-                // 对于401 等拦截，建议建立自己的拦截器，统一执行
-                // 对于500 等错误，也可以建立拦截器， 
             }
             else if(e instanceof CancelError){
                 this.result = `##操作取消/超时了`
             }
             else{
-                console.log(e);
-                this.result = `## 错误了 ${JSON.stringify(e)}`
+                this.result = `## ${JSON.stringify(e)}`
             }
         })
+    }
+
+    cancelclick(){
+        this.cancelToken.cancel();
     }
 }
 </script>

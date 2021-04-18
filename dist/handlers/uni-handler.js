@@ -1,5 +1,6 @@
 import { CancelError } from '../errors';
 import { Task } from '../task/task';
+const app = uni || wx;
 /** uni 的 GET POST PUT OPTION 等操作的 处理终端 */
 export class UniRequestHttpClientHandler {
     send(request, httpClient) {
@@ -9,7 +10,7 @@ export class UniRequestHttpClientHandler {
         }
         const p = new Promise((resolve, reject) => {
             var _a, _b;
-            let task = uni.request({
+            let task = app.request({
                 url: request.url,
                 method: request.method,
                 data: request.data,
@@ -60,7 +61,7 @@ export class UniUploadHttpClientHandler {
         }
         const p = new Promise((resovle, reject) => {
             var _a, _b, _c, _d, _e, _f;
-            let task = uni.uploadFile({
+            let task = app.uploadFile({
                 url: request.url,
                 files: (_a = request.data) === null || _a === void 0 ? void 0 : _a.files,
                 fileType: (_b = request.data) === null || _b === void 0 ? void 0 : _b.fileType,
@@ -116,7 +117,7 @@ export class UniDownloadHttpClientHandler {
         }
         const p = new Promise((resolve, reject) => {
             var _a;
-            let task = uni.downloadFile({
+            let task = app.downloadFile({
                 url: request.url,
                 header: request.header,
                 success: res => {

@@ -13,8 +13,8 @@ export interface IntercepterRequestContext {
     pipeOptions: PipeOptions;
 }
 export interface IntercepterResponseContext {
-    httpClient: HttpClient;
-    httpClientHander: IHttpClientHandler;
+    httpClient?: HttpClient;
+    httpClientHander?: IHttpClientHandler;
     statusCode: number;
     data: any;
     error?: any;

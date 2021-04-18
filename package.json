@@ -16,8 +16,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@dcloudio/types": "*",
-    "typescript": "*",
+    "@dcloudio/types": "2.1.2",
+    "typescript": "4.2.4",
     "vue": "2.6.12"
   }
 }

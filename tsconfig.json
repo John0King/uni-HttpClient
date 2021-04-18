@@ -26,8 +26,8 @@
     },
     "lib": [
       "esnext",
-      "dom",
-      "dom.iterable",
+       "dom",
+      // "dom.iterable",
       "scripthost"
     ]
   },
