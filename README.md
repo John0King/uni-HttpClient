@@ -1,17 +1,22 @@
-# uni-httpclient
+适用于 uniapp 的 请求拦截库 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
+
+## uni-httpclient
 
 [![npm version](https://badgen.net/npm/v/uni-httpclient)](https://www.npmjs.com/package/uni-httpclient)
 [![npm download](https://badgen.net/npm/dt/uni-httpclient)](https://www.npmjs.com/package/uni-httpclient)
 [![GitHub version](https://badgen.net/github/forks/john0king/uni-httpclient)](https://github.com/John0King/uni-HttpClient)
 [![GitHub star](https://badgen.net/github/stars/john0king/uni-httpclient)](https://github.com/John0King/uni-HttpClient)
 
-适用于 uniapp 的 HttpClient. 如果这个库帮助了您，请您在github上给个star, 或者dcloud 插件市场上点个赞。
 
-## Update: 2021/2/19
-#### v1.3.4
 
-- 修复#7 setupDefault 导致的 StatusCode拦截器未添加到拦截器管道的问题
-- 修复 #5 `Promose<null>` 的 null 值 token 不被忽略的问题
+## Update: 2021/4/19
+#### v1.4.1
+
+- 变更： `HttpClient` 现在废弃全局拦截器了， 全部都是实例，原来的方法仍然兼容， 现在可以为不同的 api 创建不同的`HttpClient`实例了。
+- 变更： 现在支持 `httpclient.get({ url:'/api/do', ... })` 了，配置参数更加方便， 而且仍然兼容原来的接口
+- 新增： 我们支持原生微信了， 现在 `UniRequestHandler` 等，会在找不到 `uni` 对象的情况下使用 `wx` 对象。
+- 变更： `httpclient.intercepters` 实例的字段，类型从 `Array<T>` 变更为 `IntercepterCollection extends Array` ， 带来了 `insertBefore()` 和 `insertAfter()` 方法。  
+- 变更： Demo 程序更新了， 带来了 拦截器的demo。
 
 ### url 操作
 
@@ -30,7 +35,7 @@
 ```
 
 ## 核心功能：
-- [x] 配置 `HttpClient.setupDefaults()`
+- [x] 配置 `httpClient.setupDefaults()` （现在是实例方法了）
 - [x] query
   - [x] get
   - [x] post
@@ -200,7 +205,7 @@ StatusCodeIntercepter 产生的错误是 StatusCodeError,
 Cancel 产生的错误是 CancelError
 
 
-## 模拟数据源
+## 拦截器 和 模拟数据源
 
 模拟数据源要使用自定义的拦截器，且应该将此拦截器放在第一个拦截器（不要让AutoDomainIntercepter发挥作用），
 不懂Typescript 的同学可以将一下代码放到 https://www.staging-typescript.org/zh/play 来查看js版本
@@ -230,12 +235,13 @@ export class MyDataIntercepter implements HttpClientIntercepter {
             }
         }
         // 只要你不调用 next ， 就不会往下执行，你随时可以阻止往下执行
+        return await next(request);
     }
 }
 
 // 使用
 
-HttpClient.setupDefaults({ 
+httpClient.setupDefaults({ 
   retryCount: 1,
   timeout:15,
   statusCodeError:true,
