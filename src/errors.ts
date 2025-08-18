@@ -1,4 +1,4 @@
-import { ResponseData } from './options';
+import  type { ResponseData } from './options';
 
 
 /**

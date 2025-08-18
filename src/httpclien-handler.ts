@@ -1,5 +1,5 @@
-import { IntercepterRequestContext, IntercepterResponseContext } from "./intercepter";
-import { HttpClient } from './httpclient';
+import type { IntercepterRequestContext, IntercepterResponseContext } from "./intercepter";
+import type { HttpClient } from './httpclient';
 
 /**
  * httpclient 处理终端的接口

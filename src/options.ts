@@ -1,5 +1,5 @@
-import { ICancelToken } from './cancel-token';
-import { IHttpClientHandler } from './httpclien-handler';
+import type { ICancelToken } from './cancel-token';
+import type { IHttpClientHandler } from './httpclien-handler';
 
 export interface PipeOptions {
     cancelToken?: ICancelToken;

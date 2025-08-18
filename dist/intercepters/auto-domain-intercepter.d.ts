@@ -1,4 +1,4 @@
-import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from "../intercepter";
+import type { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from "../intercepter";
 export declare class AutoDomainIntercepter implements HttpClientIntercepter {
     factory: (url: string) => string;
     /**

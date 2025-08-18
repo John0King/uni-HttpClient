@@ -1,5 +1,5 @@
-import { ICancelToken } from './cancel-token';
-import { IHttpClientHandler } from './httpclien-handler';
+import type { ICancelToken } from './cancel-token';
+import type { IHttpClientHandler } from './httpclien-handler';
 export interface PipeOptions {
     cancelToken?: ICancelToken;
     /** 秒数， 必须添加 @see TimeoutIntercepter 才管用 */
@@ -26,8 +26,8 @@ export interface ResponseData<T = any, TError = any> {
     error?: TError;
     header: any;
 }
-export declare type HttpMethods = "OPTIONS" | "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "TRACE" | "CONNECT";
-export declare type DefaultIntercepterOptions = {
+export type HttpMethods = "OPTIONS" | "GET" | "HEAD" | "POST" | "PUT" | "DELETE" | "TRACE" | "CONNECT";
+export type DefaultIntercepterOptions = {
     /** 重试次数 @see RetryIntercepter */
     retryCount?: number;
     /** 重试间隔 单位毫秒 */

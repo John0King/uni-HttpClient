@@ -1,4 +1,4 @@
-import { HttpClientIntercepter, IntercepterRequestContext, IntercepterDelegate, IntercepterResponseContext } from '../intercepter';
+import type { HttpClientIntercepter, IntercepterRequestContext, IntercepterDelegate, IntercepterResponseContext } from '../intercepter';
 export declare class TimeoutIntercepter implements HttpClientIntercepter {
     cancelAfterSeconds?: number | undefined;
     private readonly _key;

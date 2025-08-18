@@ -1,7 +1,6 @@
-import { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from './intercepter';
-import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions, HandlerProfiles, HttpClientGetOption, HttpClientRequestOption, HttpClientPostOption, HttpClientPutOption, HttpClientDeleteOption, HttpClientUploadOption, HttpClientDownloadOption } from './options';
-import { IHttpClientHandler } from './httpclien-handler';
-import { UniRequestHttpClientHandler, UniUploadHttpClientHandler, UniDownloadHttpClientHandler } from "./handlers/uni-handler";
+import type { HttpClientIntercepter, IntercepterRequestContext, IntercepterResponseContext, IntercepterDelegate } from './intercepter';
+import type { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions, HandlerProfiles, HttpClientGetOption, HttpClientRequestOption, HttpClientPostOption, HttpClientPutOption, HttpClientDeleteOption, HttpClientUploadOption, HttpClientDownloadOption } from './options';
+import type { IHttpClientHandler } from './httpclien-handler';
 import { AutoDomainIntercepter } from './intercepters/auto-domain-intercepter';
 import { RetryIntercepter } from './intercepters/retry-intercepter';
 import { TimeoutIntercepter } from './intercepters/timeout-interceper';

@@ -1,7 +1,7 @@
 import { CancelToken } from '../cancel-token';
 import { CancelError } from '../errors';
 import { Task } from '../task/task';
-import { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, IntercepterResponseContext } from '../intercepter';
+import type { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, IntercepterResponseContext } from '../intercepter';
 
 export class MaxTimeoutIntercepter implements HttpClientIntercepter{
 

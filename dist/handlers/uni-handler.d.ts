@@ -1,6 +1,6 @@
-import { IntercepterRequestContext, IntercepterResponseContext } from "../intercepter";
-import { HttpClient } from '../httpclient';
-import { IHttpClientHandler } from "../httpclien-handler";
+import type { IntercepterRequestContext, IntercepterResponseContext } from "../intercepter";
+import type { HttpClient } from '../httpclient';
+import type { IHttpClientHandler } from "../httpclien-handler";
 /** uni 的 GET POST PUT OPTION 等操作的 处理终端 */
 export declare class UniRequestHttpClientHandler implements IHttpClientHandler {
     send(request: IntercepterRequestContext, httpClient: HttpClient): Promise<IntercepterResponseContext>;

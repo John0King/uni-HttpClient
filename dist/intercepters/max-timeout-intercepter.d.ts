@@ -1,4 +1,4 @@
-import { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, IntercepterResponseContext } from '../intercepter';
+import type { HttpClientIntercepter, IntercepterDelegate, IntercepterRequestContext, IntercepterResponseContext } from '../intercepter';
 export declare class MaxTimeoutIntercepter implements HttpClientIntercepter {
     maxTimeoutSeconds: number;
     constructor(maxTimeoutSeconds?: number);

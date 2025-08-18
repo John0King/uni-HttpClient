@@ -1,4 +1,4 @@
-import { HttpClientIntercepter } from "./intercepter";
+import type { HttpClientIntercepter } from "./intercepter";
 
 export class IntercepterCollection extends Array<HttpClientIntercepter>{
     insertBefore<T extends HttpClientIntercepter>(type:Type<T>, value:HttpClientIntercepter):void{

@@ -1,8 +1,8 @@
-import { IntercepterRequestContext, IntercepterResponseContext } from "../intercepter";
-import { HttpClient } from '../httpclient';
+import type { IntercepterRequestContext, IntercepterResponseContext } from "../intercepter";
+import type { HttpClient } from '../httpclient';
 import { CancelError } from '../errors';
 import { Task } from '../task/task';
-import { IHttpClientHandler } from "../httpclien-handler";
+import type { IHttpClientHandler } from "../httpclien-handler";
 declare let wx:UniApp.Uni;
 const app = uni || wx;
 

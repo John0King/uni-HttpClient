@@ -1,6 +1,6 @@
-import { HttpClient } from './httpclient';
-import { PipeOptions, HttpMethods } from "./options";
-import { IHttpClientHandler } from './httpclien-handler';
+import type { HttpClient } from './httpclient';
+import type { PipeOptions, HttpMethods } from "./options";
+import type { IHttpClientHandler } from './httpclien-handler';
 export interface HttpClientIntercepter {
     handle(request: IntercepterRequestContext, next: IntercepterDelegate): Promise<IntercepterResponseContext>;
 }

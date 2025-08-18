@@ -1,6 +1,6 @@
 {
   "name": "uni-httpclient",
-  "version": "1.22.22",
+  "version": "1.4.1",
   "private": false,
   "files": [
     "dist"
@@ -16,8 +16,8 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "@dcloudio/types": "2.1.2",
-    "typescript": "4.2.4",
-    "vue": "2.6.12"
+    "@dcloudio/types": "3.4.19",
+    "typescript": "^5.9.2",
+    "vue": "^3.5.18"
   }
 }

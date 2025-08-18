@@ -1,2 +1,2 @@
-import { HandlerProfiles } from "../options";
+import type { HandlerProfiles } from "../options";
 export declare let defaultProfile: HandlerProfiles;

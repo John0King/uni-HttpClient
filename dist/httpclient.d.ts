@@ -1,6 +1,6 @@
-import { IntercepterRequestContext } from './intercepter';
-import { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions, HandlerProfiles, HttpClientGetOption, HttpClientRequestOption, HttpClientPostOption, HttpClientPutOption, HttpClientUploadOption } from './options';
-import { IHttpClientHandler } from './httpclien-handler';
+import type { IntercepterRequestContext } from './intercepter';
+import type { PipeOptions, ResponseData, HttpMethods, DefaultIntercepterOptions, HandlerProfiles, HttpClientGetOption, HttpClientRequestOption, HttpClientPostOption, HttpClientPutOption, HttpClientUploadOption } from './options';
+import type { IHttpClientHandler } from './httpclien-handler';
 import { IntercepterCollection } from './IntercepterCollection';
 export declare class HttpClient {
     private profiles;

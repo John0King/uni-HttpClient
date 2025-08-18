@@ -1,5 +1,5 @@
 import { UniDownloadHttpClientHandler, UniRequestHttpClientHandler, UniUploadHttpClientHandler } from "../handlers/uni-handler";
-import { HandlerProfiles } from "../options";
+import type { HandlerProfiles } from "../options";
 
 export let defaultProfile :HandlerProfiles = {
     request: new UniRequestHttpClientHandler(),

@@ -1,4 +1,4 @@
-import { HttpClientIntercepter, IntercepterRequestContext, IntercepterDelegate, IntercepterResponseContext } from '../intercepter';
+import type { HttpClientIntercepter, IntercepterRequestContext, IntercepterDelegate, IntercepterResponseContext } from '../intercepter';
 import { CancelToken } from '../cancel-token';
 import { CancelError } from '../errors';
 

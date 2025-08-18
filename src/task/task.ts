@@ -1,4 +1,4 @@
-import { ICancelToken } from '../cancel-token'
+import type {  ICancelToken } from '../cancel-token'
 import { TaskSource } from './task-source'
 
 export class Task {

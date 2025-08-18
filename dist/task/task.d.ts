@@ -1,4 +1,4 @@
-import { ICancelToken } from '../cancel-token';
+import type { ICancelToken } from '../cancel-token';
 export declare class Task {
     /**
      * 延时一段时间
