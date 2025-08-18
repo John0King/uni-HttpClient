@@ -8,6 +8,10 @@
 [![GitHub star](https://badgen.net/github/stars/john0king/uni-httpclient)](https://github.com/John0King/uni-HttpClient)
 
 
+## Update: 2025/8/18
+#### v1.5.1
+
+- 使用最新typescript sdk, 修复与vue3 中 类型导入问题
 
 ## Update: 2021/4/19
 #### v1.4.1
